@@ -1,3 +1,14 @@
+CONFIG(debug, debug|release){
+    DEFINES += DEBUG
+}
+CONFIG(release, debug|release){
+    DEFINES -= DEBUG
+    unix:!macx{ #just uncomment next lines if you want to ignore asserts and got a more optimized binary
+        #QMAKE_CXXFLAGS_RELEASE -= -g
+        #QMAKE_CXXFLAGS += -O3 -DNDEBUG
+    }
+}
+
 #Add or remove all the modules you need
 
 #Common module: contains classes and common functions used on all the other modules

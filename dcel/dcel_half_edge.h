@@ -240,7 +240,7 @@ inline bool Dcel::HalfEdge::operator!=(const HalfEdge& otherHalfEdge) const {
  */
 inline void Dcel::HalfEdge::checkFromVertex() const {
     if (fromVertex == nullptr){
-        qDebug() << "ALERT! Half Edge "<< id << ": from_vertex is nullptr";
+        std::cerr << "ALERT! Half Edge "<< id << ": from_vertex is nullptr";
         assert(! (fromVertex == nullptr));
     }
 }
@@ -251,7 +251,7 @@ inline void Dcel::HalfEdge::checkFromVertex() const {
  */
 inline void Dcel::HalfEdge::checkToVertex() const {
     if (toVertex == nullptr){
-        qDebug() << "ALERT! Half Edge "<< id << ": to_vertex is nullptr";
+        std::cerr << "ALERT! Half Edge "<< id << ": to_vertex is nullptr";
         assert(! (toVertex == nullptr));
     }
 }
@@ -262,7 +262,7 @@ inline void Dcel::HalfEdge::checkToVertex() const {
  */
 inline void Dcel::HalfEdge::checkTwin() const {
     if (twin == nullptr){
-        qDebug() << "ALERT! Half Edge "<< id << ": twin is nullptr";
+        std::cerr << "ALERT! Half Edge "<< id << ": twin is nullptr";
         assert(! (twin == nullptr));
     }
 }
@@ -273,7 +273,7 @@ inline void Dcel::HalfEdge::checkTwin() const {
  */
 inline void Dcel::HalfEdge::checkPrev() const {
     if (prev == nullptr){
-        qDebug() << "ALERT! Half Edge "<< id << ": prev is nullptr";
+        std::cerr << "ALERT! Half Edge "<< id << ": prev is nullptr";
         assert(! (prev == nullptr));
     }
 }
@@ -284,7 +284,7 @@ inline void Dcel::HalfEdge::checkPrev() const {
  */
 inline void Dcel::HalfEdge::checkNext() const {
     if (next == nullptr){
-        qDebug() << "ALERT! Half Edge "<< id << ": next is nullptr";
+        std::cerr << "ALERT! Half Edge "<< id << ": next is nullptr";
         assert(! (next == nullptr));
     }
 }
@@ -295,7 +295,7 @@ inline void Dcel::HalfEdge::checkNext() const {
  */
 inline void Dcel::HalfEdge::checkFace() const {
     if (face == nullptr){
-        qDebug() << "ALERT! Half Edge "<< id << ": face is nullptr";
+        std::cerr << "ALERT! Half Edge "<< id << ": face is nullptr";
         assert(! (face == nullptr));
     }
 }

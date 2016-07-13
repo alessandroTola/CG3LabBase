@@ -215,7 +215,7 @@ Dcel::Vertex::ConstAdjacentVertexIterator Dcel::Vertex::adjacentVertexEnd() cons
 Dcel::Vertex::ConstAdjacentVertexIterator Dcel::Vertex::adjacentVertexBegin(const HalfEdge* start) const {
     #ifdef DEBUG
     if (start->getFromVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     #endif
@@ -236,11 +236,11 @@ Dcel::Vertex::ConstAdjacentVertexIterator Dcel::Vertex::adjacentVertexBegin(cons
 Dcel::Vertex::ConstAdjacentVertexIterator Dcel::Vertex::adjacentVertexBegin(const HalfEdge* start, const HalfEdge* end) const {
     #ifdef DEBUG
     if (start->getFromVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     if (end->getFromVertex() != this){
-        qDebug() << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     #endif
@@ -267,8 +267,10 @@ Dcel::Vertex::ConstAdjacentVertexIterator Dcel::Vertex::adjacentVertexBegin(cons
     for (heit = start->incomingHalfEdgeBegin(); heit != start->incomingHalfEdgeEnd(); ++heit){
         if ((*heit)->getFromVertex() == this) return ConstAdjacentVertexIterator(*heit, *heit, this);
     }
+    #ifdef DEBUG
     std::cerr << "ERROR: start vertex " << start->getId() << " hasn't this vertex " << this->getId() << " as adjacent vertex.\n";
     assert(0);
+    #endif
     return ConstAdjacentVertexIterator();
 }
 
@@ -293,7 +295,7 @@ Dcel::Vertex::ConstAdjacentVertexIterator Dcel::Vertex::adjacentVertexBegin(cons
     while (heit != start->incomingHalfEdgeEnd() && ((*heit)->getFromVertex() != this)) ++heit;
     #ifdef DEBUG
     if ((*heit)->getFromVertex() != this) {
-        qDebug() << "ERROR: start vertex " << start->getId() << " hasn't this vertex " << this->getId() << " as adjacent vertex.\n";
+        std::cerr << "ERROR: start vertex " << start->getId() << " hasn't this vertex " << this->getId() << " as adjacent vertex.\n";
         assert(0);
     }
     #endif
@@ -301,8 +303,10 @@ Dcel::Vertex::ConstAdjacentVertexIterator Dcel::Vertex::adjacentVertexBegin(cons
     for (heit = end->incomingHalfEdgeBegin(); heit != end->incomingHalfEdgeEnd(); ++heit){
         if ((*heit)->getFromVertex() == this) return ConstAdjacentVertexIterator(s, *heit, this);
     }
+    #ifdef DEBUG
     std::cerr << "ERROR: end vertex " << end->getId() << " hasn't this vertex " << this->getId() << " as adjacent vertex.\n";
     assert(0);
+    #endif
     return ConstAdjacentVertexIterator();
 }
 
@@ -343,7 +347,7 @@ Dcel::Vertex::ConstOutgoingHalfEdgeIterator Dcel::Vertex::outgoingHalfEdgeEnd() 
 Dcel::Vertex::ConstOutgoingHalfEdgeIterator Dcel::Vertex::outgoingHalfEdgeBegin(const Dcel::HalfEdge* start) const {
     #ifdef DEBUG
     if (start->getFromVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     #endif
@@ -364,11 +368,11 @@ Dcel::Vertex::ConstOutgoingHalfEdgeIterator Dcel::Vertex::outgoingHalfEdgeBegin(
 Dcel::Vertex::ConstOutgoingHalfEdgeIterator Dcel::Vertex::outgoingHalfEdgeBegin(const HalfEdge* start, const HalfEdge* end) const {
     #ifdef DEBUG
     if (start->getFromVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     if (end->getFromVertex() != this){
-        qDebug() << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     #endif
@@ -412,7 +416,7 @@ Dcel::Vertex::ConstIncomingHalfEdgeIterator Dcel::Vertex::incomingHalfEdgeEnd() 
 Dcel::Vertex::ConstIncomingHalfEdgeIterator Dcel::Vertex::incomingHalfEdgeBegin(const HalfEdge* start) const {
     #ifdef DEBUG
     if (start->getToVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as to vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as to vertex.\n";
         assert(0);
     }
     #endif
@@ -433,11 +437,11 @@ Dcel::Vertex::ConstIncomingHalfEdgeIterator Dcel::Vertex::incomingHalfEdgeBegin(
 Dcel::Vertex::ConstIncomingHalfEdgeIterator Dcel::Vertex::incomingHalfEdgeBegin(const HalfEdge* start, const HalfEdge* end) const {
     #ifdef DEBUG
     if (start->getToVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as to vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as to vertex.\n";
         assert(0);
     }
     if (end->getToVertex() != this){
-        qDebug() << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as to vertex.\n";
+        std::cerr << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as to vertex.\n";
         assert(0);
     }
     #endif
@@ -481,7 +485,7 @@ Dcel::Vertex::ConstIncidentHalfEdgeIterator Dcel::Vertex::incidentHalfEdgeEnd() 
 Dcel::Vertex::ConstIncidentHalfEdgeIterator Dcel::Vertex::incidentHalfEdgeBegin(const HalfEdge *start) const {
     #ifdef DEBUG
     if (start->getToVertex() != this || start->getFromVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as to or from vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as to or from vertex.\n";
         assert(0);
     }
     #endif
@@ -502,11 +506,11 @@ Dcel::Vertex::ConstIncidentHalfEdgeIterator Dcel::Vertex::incidentHalfEdgeBegin(
 Dcel::Vertex::ConstIncidentHalfEdgeIterator Dcel::Vertex::incidentHalfEdgeBegin(const HalfEdge *start, const HalfEdge *end) const {
     #ifdef DEBUG
     if (start->getToVertex() != this && start->getFromVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as to or from vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as to or from vertex.\n";
         assert(0);
     }
     if (end->getToVertex() != this && end->getFromVertex() != this){
-        qDebug() << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as to or from vertex.\n";
+        std::cerr << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as to or from vertex.\n";
         assert(0);
     }
     #endif
@@ -550,7 +554,7 @@ Dcel::Vertex::ConstIncidentFaceIterator Dcel::Vertex::incidentFaceEnd() const {
 Dcel::Vertex::ConstIncidentFaceIterator Dcel::Vertex::incidentFaceBegin(const HalfEdge* start) const {
     #ifdef DEBUG
     if (start->getFromVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     #endif
@@ -571,11 +575,11 @@ Dcel::Vertex::ConstIncidentFaceIterator Dcel::Vertex::incidentFaceBegin(const Ha
 Dcel::Vertex::ConstIncidentFaceIterator Dcel::Vertex::incidentFaceBegin(const HalfEdge* start, const HalfEdge* end) const {
     #ifdef DEBUG
     if (start->getFromVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     if (end->getFromVertex() != this){
-        qDebug() << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     #endif
@@ -681,7 +685,7 @@ Dcel::Vertex::AdjacentVertexIterator Dcel::Vertex::adjacentVertexEnd() {
 Dcel::Vertex::AdjacentVertexIterator Dcel::Vertex::adjacentVertexBegin(HalfEdge* start) {
     #ifdef DEBUG
     if (start->getFromVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     #endif
@@ -702,11 +706,11 @@ Dcel::Vertex::AdjacentVertexIterator Dcel::Vertex::adjacentVertexBegin(HalfEdge*
 Dcel::Vertex::AdjacentVertexIterator Dcel::Vertex::adjacentVertexBegin(HalfEdge* start, HalfEdge* end) {
     #ifdef DEBUG
     if (start->getFromVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     if (end->getFromVertex() != this){
-        qDebug() << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     #endif
@@ -759,7 +763,7 @@ Dcel::Vertex::AdjacentVertexIterator Dcel::Vertex::adjacentVertexBegin(Vertex* s
     while (heit!= start->incomingHalfEdgeEnd() && ((*heit)->getFromVertex() != this)) ++heit;
     #ifdef DEBUG
     if ((*heit)->getFromVertex() != this) {
-        qDebug() << "ERROR: start vertex " << start->getId() << " hasn't this vertex " << this->getId() << " as adjacent vertex.\n";
+        std::cerr << "ERROR: start vertex " << start->getId() << " hasn't this vertex " << this->getId() << " as adjacent vertex.\n";
         assert(0);
     }
     #endif
@@ -812,7 +816,7 @@ Dcel::Vertex::OutgoingHalfEdgeIterator Dcel::Vertex::outgoingHalfEdgeEnd() {
 Dcel::Vertex::OutgoingHalfEdgeIterator Dcel::Vertex::outgoingHalfEdgeBegin(HalfEdge* start) {
     #ifdef DEBUG
     if (start->getFromVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     #endif
@@ -833,11 +837,11 @@ Dcel::Vertex::OutgoingHalfEdgeIterator Dcel::Vertex::outgoingHalfEdgeBegin(HalfE
 Dcel::Vertex::OutgoingHalfEdgeIterator Dcel::Vertex::outgoingHalfEdgeBegin(HalfEdge* start, HalfEdge* end) {
     #ifdef DEBUG
     if (start->getFromVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     if (end->getFromVertex() != this){
-        qDebug() << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     #endif
@@ -884,7 +888,7 @@ Dcel::Vertex::IncomingHalfEdgeIterator Dcel::Vertex::incomingHalfEdgeEnd() {
 Dcel::Vertex::IncomingHalfEdgeIterator Dcel::Vertex::incomingHalfEdgeBegin(HalfEdge* start) {
     #ifdef DEBUG
     if (start->getToVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as to vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as to vertex.\n";
         assert(0);
     }
     #endif
@@ -905,11 +909,11 @@ Dcel::Vertex::IncomingHalfEdgeIterator Dcel::Vertex::incomingHalfEdgeBegin(HalfE
 Dcel::Vertex::IncomingHalfEdgeIterator Dcel::Vertex::incomingHalfEdgeBegin(HalfEdge* start, HalfEdge* end) {
     #ifdef DEBUG
     if (start->getToVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as to vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as to vertex.\n";
         assert(0);
     }
     if (end->getToVertex() != this){
-        qDebug() << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as to vertex.\n";
+        std::cerr << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as to vertex.\n";
         assert(0);
     }
     #endif
@@ -956,7 +960,7 @@ Dcel::Vertex::IncidentHalfEdgeIterator Dcel::Vertex::incidentHalfEdgeEnd() {
 Dcel::Vertex::IncidentHalfEdgeIterator Dcel::Vertex::incidentHalfEdgeBegin(HalfEdge* start) {
     #ifdef DEBUG
     if (start->getToVertex() != this || start->getFromVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as to or from vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as to or from vertex.\n";
         assert(0);
     }
     #endif
@@ -977,11 +981,11 @@ Dcel::Vertex::IncidentHalfEdgeIterator Dcel::Vertex::incidentHalfEdgeBegin(HalfE
 Dcel::Vertex::IncidentHalfEdgeIterator Dcel::Vertex::incidentHalfEdgeBegin(HalfEdge* start, HalfEdge* end) {
     #ifdef DEBUG
     if (start->getToVertex() != this && start->getFromVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as to or from vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as to or from vertex.\n";
         assert(0);
     }
     if (end->getToVertex() != this && end->getFromVertex() != this){
-        qDebug() << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as to or from vertex.\n";
+        std::cerr << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as to or from vertex.\n";
         assert(0);
     }
     #endif
@@ -1028,7 +1032,7 @@ Dcel::Vertex::IncidentFaceIterator Dcel::Vertex::incidentFaceEnd() {
 Dcel::Vertex::IncidentFaceIterator Dcel::Vertex::incidentFaceBegin(HalfEdge* start) {
     #ifdef DEBUG
     if (start->getFromVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     #endif
@@ -1049,11 +1053,11 @@ Dcel::Vertex::IncidentFaceIterator Dcel::Vertex::incidentFaceBegin(HalfEdge* sta
 Dcel::Vertex::IncidentFaceIterator Dcel::Vertex::incidentFaceBegin(HalfEdge* start, HalfEdge* end) {
     #ifdef DEBUG
     if (start->getFromVertex() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     if (end->getFromVertex() != this){
-        qDebug() << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
+        std::cerr << "ERROR: end half edge " << end->getId() << " hasn't this vertex " << this->getId() << " as from vertex.\n";
         assert(0);
     }
     #endif

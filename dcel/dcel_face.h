@@ -325,7 +325,7 @@ inline bool Dcel::Face::operator != (const Face& otherFace) const {
  */
 inline void Dcel::Face::checkOuterHalfEdge() const {
     if (outerHalfEdge == nullptr) {
-        qDebug() << "ALERT! Face "<< id << ": outer_half_edge is nullptr";
+        std::cerr << "ALERT! Face "<< id << ": outer_half_edge is nullptr";
         assert(! (outerHalfEdge == nullptr));
     }
 }

@@ -275,7 +275,7 @@ inline bool Dcel::Vertex::operator != (const Vertex& otherVertex) const {
  */
 inline void Dcel::Vertex::checkIncidentHalfEdge() const {
     if (incidentHalfEdge == nullptr){
-        qDebug() << "ALERT! Vertex "<< id <<": incident_half_edge is nullptr";
+        std::cerr << "ALERT! Vertex "<< id <<": incident_half_edge is nullptr";
         assert(! (incidentHalfEdge == nullptr));
     }
 }

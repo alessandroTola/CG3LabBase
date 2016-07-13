@@ -221,7 +221,7 @@ Dcel::Face::ConstIncidentHalfEdgeIterator Dcel::Face::incidentHalfEdgeEnd() cons
 Dcel::Face::ConstIncidentHalfEdgeIterator Dcel::Face::incidentHalfEdgeBegin(const Dcel::HalfEdge* start) const {
     #ifdef DEBUG
     if (start->getFace() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
         assert(0);
     }
     #endif
@@ -242,11 +242,11 @@ Dcel::Face::ConstIncidentHalfEdgeIterator Dcel::Face::incidentHalfEdgeBegin(cons
 Dcel::Face::ConstIncidentHalfEdgeIterator Dcel::Face::incidentHalfEdgeBegin(const Dcel::HalfEdge* start, const Dcel::HalfEdge* end) const {
     #ifdef DEBUG
     if (start->getFace() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
         assert(0);
     }
     if (end->getFace() != this){
-        qDebug() << "ERROR: end half edge " << end->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
+        std::cerr << "ERROR: end half edge " << end->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
         assert(0);
     }
     #endif
@@ -290,7 +290,7 @@ Dcel::Face::ConstIncidentVertexIterator Dcel::Face::incidentVertexEnd() const {
 Dcel::Face::ConstIncidentVertexIterator Dcel::Face::incidentVertexBegin(const Dcel::HalfEdge* start) const {
     #ifdef DEBUG
     if (start->getFace() != this) {
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
         assert(0);
     }
     #endif
@@ -311,11 +311,11 @@ Dcel::Face::ConstIncidentVertexIterator Dcel::Face::incidentVertexBegin(const Dc
 Dcel::Face::ConstIncidentVertexIterator Dcel::Face::incidentVertexBegin(const Dcel::HalfEdge* start, const Dcel::HalfEdge* end) const {
     #ifdef DEBUG
     if (start->getFace() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
         assert(0);
     }
     if (end->getFace() != this){
-        qDebug() << "ERROR: end half edge " << end->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
+        std::cerr << "ERROR: end half edge " << end->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
         assert(0);
     }
     #endif
@@ -366,7 +366,7 @@ Dcel::Face::ConstIncidentVertexIterator Dcel::Face::incidentVertexBegin(const Dc
     while (heit!= start->incomingHalfEdgeEnd() && ((*heit)->getFace() != this)) ++heit;
     #ifdef DEBUG
     if ((*heit)->getFace() != this) {
-        qDebug() << "ERROR: start vertex " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
+        std::cerr << "ERROR: start vertex " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
         assert(0);
     }
     #endif
@@ -559,7 +559,7 @@ Dcel::Face::IncidentHalfEdgeIterator Dcel::Face::incidentHalfEdgeEnd() {
 Dcel::Face::IncidentHalfEdgeIterator Dcel::Face::incidentHalfEdgeBegin(Dcel::HalfEdge* start) {
     #ifdef DEBUG
     if (start->getFace() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
         assert(0);
     }
     #endif
@@ -580,11 +580,11 @@ Dcel::Face::IncidentHalfEdgeIterator Dcel::Face::incidentHalfEdgeBegin(Dcel::Hal
 Dcel::Face::IncidentHalfEdgeIterator Dcel::Face::incidentHalfEdgeBegin(Dcel::HalfEdge* start, Dcel::HalfEdge* end) {
     #ifdef DEBUG
     if (start->getFace() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
         assert(0);
     }
     if (end->getFace() != this){
-        qDebug() << "ERROR: end half edge " << end->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
+        std::cerr << "ERROR: end half edge " << end->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
         assert(0);
     }
     #endif
@@ -628,7 +628,7 @@ Dcel::Face::IncidentVertexIterator Dcel::Face::incidentVertexEnd() {
 Dcel::Face::IncidentVertexIterator Dcel::Face::incidentVertexBegin(Dcel::HalfEdge* start) {
     #ifdef DEBUG
     if (start->getFace() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
         assert(0);
     }
     #endif
@@ -649,11 +649,11 @@ Dcel::Face::IncidentVertexIterator Dcel::Face::incidentVertexBegin(Dcel::HalfEdg
 Dcel::Face::IncidentVertexIterator Dcel::Face::incidentVertexBegin(Dcel::HalfEdge* start, Dcel::HalfEdge* end) {
     #ifdef DEBUG
     if (start->getFace() != this){
-        qDebug() << "ERROR: start half edge " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
+        std::cerr << "ERROR: start half edge " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
         assert(0);
     }
     if (end->getFace() != this){
-        qDebug() << "ERROR: end half edge " << end->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
+        std::cerr << "ERROR: end half edge " << end->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
         assert(0);
     }
     #endif
@@ -704,7 +704,7 @@ Dcel::Face::IncidentVertexIterator Dcel::Face::incidentVertexBegin(Dcel::Vertex*
     while (heit!= start->incomingHalfEdgeEnd() && ((*heit)->getFace() != this)) ++heit;
     #ifdef DEBUG
     if ((*heit)->getFace() != this) {
-        qDebug() << "ERROR: start vertex " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
+        std::cerr << "ERROR: start vertex " << start->getId() << " hasn't this face " << this->getId() << " as incident face.\n";
         assert(0);
     }
     #endif
