@@ -42,7 +42,7 @@ namespace CGALInterface{
             }
         }
 
-        /*void triangulate(std::vector<std::array<Point2D, 3> >& triangles, const std::vector<Point2D>& polygon, const std::vector<std::vector<Point2D> >& holes) {
+        void triangulate(std::vector<std::array<Point2D, 3> >& triangles, const std::vector<Point2D>& polygon, const std::vector<std::vector<Point2D> >& holes) {
             triangles.clear();
             Polygon_2 polygon1;
             std::vector<Polygon_2> innerPolygons;
@@ -86,7 +86,7 @@ namespace CGALInterface{
                     triangles.push_back(t);
                 }
             }
-        }*/
+        }
     }
 
     namespace BooleanOperations {
@@ -102,7 +102,7 @@ namespace CGALInterface{
             ss2 >> y;
         }
 
-        /*void difference(std::vector<std::vector<Point2D> >& result, const std::vector<Point2D>& polygon1, const std::vector<Point2D>& polygon2) {
+        void difference(std::vector<std::vector<Point2D> >& result, const std::vector<Point2D>& polygon1, const std::vector<Point2D>& polygon2) {
             result.clear();
 
             Polygon_2 P1;
@@ -138,9 +138,9 @@ namespace CGALInterface{
                 result.push_back(polygon);
             }
 
-        }*/
+        }
 
-        /*void intersection(std::vector<std::vector<Point2D> >& result, const std::vector<Point2D>& polygon1, const std::vector<Point2D>& polygon2) {
+        void intersection(std::vector<std::vector<Point2D> >& result, const std::vector<Point2D>& polygon1, const std::vector<Point2D>& polygon2) {
             result.clear();
 
             Polygon_2 P1;
@@ -175,9 +175,7 @@ namespace CGALInterface{
                 }
                 result.push_back(polygon);
             }
-        }*/
-
-
+        }
 
     }
 
