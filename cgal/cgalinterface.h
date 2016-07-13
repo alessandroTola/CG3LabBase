@@ -1,6 +1,7 @@
 #ifndef CGALINTERFACE_H
 #define CGALINTERFACE_H
 
+#include "../common/common.h"
 #include "../common/point.h"
 #include "../common/point2d.h"
 
@@ -47,11 +48,13 @@ namespace CGALInterface {
         typedef CGAL::Triangulation_face_base_with_info_2<FaceInfo2, E, TFB2>   TFBI;
         typedef CGAL::Constrained_triangulation_face_base_2<E, TFBI >           Triangle;
 
-        static std::vector< std::vector<Point2D> > dummy_holes;
+        static std::vector< std::vector<Point2D> > dummy_holes2D;
+        static std::vector< std::vector<Pointd> > dummy_holes;
 
         void markDomains(CDT& ct, CDT::Face_handle start, int index, std::list<CDT::Edge>& border);
         void markDomains(CDT& cdt);
-        void triangulate(std::vector<std::array<Point2D, 3> >& triangles, const std::vector<Point2D>& polygon, const std::vector<std::vector<Point2D> >& holes = dummy_holes);
+        void triangulate(std::vector<std::array<Point2D, 3> >& triangles, const std::vector<Point2D>& polygon, const std::vector<std::vector<Point2D> >& holes = dummy_holes2D);
+        void triangulate(std::vector<std::array<Pointd, 3> >& triangles, const Vec3 &normal, const std::vector<Pointd>& polygon, const std::vector<std::vector<Pointd> >& holes = dummy_holes);
     }
 
     namespace BooleanOperations{
