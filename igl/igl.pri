@@ -33,3 +33,9 @@ HEADERS += \
 SOURCES += \
     $$PWD/iglinterface.cpp \
     $$PWD/iglmesh.cpp
+
+
+contains(DEFINES, VIEWER_DEFINED){
+    #WARNING: BUG on qmake: comment the following line if viewer is not included
+    include ($$PWD/gui/iglmeshmanager.pri)
+}

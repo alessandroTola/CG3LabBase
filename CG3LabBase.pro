@@ -10,6 +10,8 @@ CONFIG(release, debug|release){
 }
 
 #Add or remove all the modules you need
+#Before pushing the project with your new module, please double check that everything works keeping uncommentend
+#only the modules that are required by your module. Also please write here required and optional modules for your module
 
 #Common module: contains classes and common functions used on all the other modules
 #Requires: Eigen
