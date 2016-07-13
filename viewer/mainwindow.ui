@@ -172,7 +172,7 @@
   <customwidget>
    <class>GLcanvas</class>
    <extends>QWidget</extends>
-   <header>GUI/glcanvas.h</header>
+   <header>viewer/glcanvas.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

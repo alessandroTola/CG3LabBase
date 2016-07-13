@@ -7,8 +7,8 @@
 #include "common/timer.h"
 
 ///Test viewer.pri: uncomment to test viewer module
-//#include "GUI/mainwindow.h"
-//#include "GUI/managers/windowmanager.h"
+#include "viewer/mainwindow.h"
+#include "viewer/managers/windowmanager.h"
 
 ///Test dcel.pri: uncomment to test dcel module
 #include "dcel/dcel.h"
@@ -21,21 +21,21 @@
 int main(int argc, char *argv[]) {
 
     ///Test viewer.pri: uncomment to test viewer module
-//    QApplication app(argc, argv);
+    QApplication app(argc, argv);
 
-//    MainWindow gui;  // finestra principale, contiene la canvas di QGLViewer
+    MainWindow gui;  // finestra principale, contiene la canvas di QGLViewer
 
 
-//    WindowManager wm(&gui); // Creo un window manager e lo aggiungo alla mainwindow
-//    int id = gui.addManager(&wm, "Window");
+    WindowManager wm(&gui); // Creo un window manager e lo aggiungo alla mainwindow
+    int id = gui.addManager(&wm, "Window");
 
-//    DcelManager dm(&gui);
-//    id = gui.addManager(&dm, "Dcel");
+    DcelManager dm(&gui);
+    id = gui.addManager(&dm, "Dcel");
 
-//    gui.setCurrentIndexToolBox(id); // il window manager sarà quello visualizzato di default
-//    gui.updateGlCanvas();
-//    gui.show();
+    gui.setCurrentIndexToolBox(id); // il window manager sarà quello visualizzato di default
+    gui.updateGlCanvas();
+    gui.show();
 
-//    return app.exec();
+    return app.exec();
 
 }

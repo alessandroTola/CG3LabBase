@@ -9,7 +9,7 @@
 #include <QFrame>
 #include <QColor>
 #include "../drawable_dcel.h"
-#include "GUI/mainwindow.h"
+#include "viewer/mainwindow.h"
 
 namespace Ui {
     class DcelManager;

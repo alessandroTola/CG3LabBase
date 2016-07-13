@@ -6,7 +6,7 @@ include (common/common.pri)
 
 #Viewer module: contains classes for a simple viewer
 #Requires: Common module, libQGLViewer, boost
-include (GUI/viewer.pri)
+include (viewer/viewer.pri)
 
 #Dcel module: contains a Double Connected-Edge List data structure
 #Requires: Common module, boost; Optional: Cgal module, viewer module

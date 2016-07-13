@@ -10,7 +10,7 @@
 #include <QFrame>
 #include <QColor>
 #include <iostream>
-#include "GUI/mainwindow.h"
+#include "viewer/mainwindow.h"
 
 namespace Ui {
     class WindowManager;

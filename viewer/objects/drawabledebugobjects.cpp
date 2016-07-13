@@ -1,6 +1,6 @@
 #include "drawabledebugobjects.h"
-#include "GUI/objects/cylinder.h"
-#include "GUI/objects/sphere.h"
+#include "../objects/cylinder.h"
+#include "../objects/sphere.h"
 
 DrawableDebugObjects::DrawableDebugObjects() : visible(true) {
 

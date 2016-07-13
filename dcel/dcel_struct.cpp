@@ -42,15 +42,12 @@ Dcel::Dcel(const Dcel& dcel) {
  * Elimina tutti gli elementi contenuti nelle liste dei vertici, degli half edge e delle facce della Dcel.
  */
 Dcel::~Dcel() {
-    # pragma omp parallel for if(getNumberVertices()>1000)
     for (unsigned int i=0; i<vertices.size(); i++)
         if (vertices[i]!= nullptr)
             delete vertices[i];
-    # pragma omp parallel for if(getNumberHalfEdges()>1000)
     for (unsigned int i=0; i<halfEdges.size(); i++)
         if (halfEdges[i] != nullptr)
             delete halfEdges[i];
-    # pragma omp parallel for if(getNumberFaces()>1000)
     for (unsigned int i=0; i<faces.size(); i++)
         if (faces[i] != nullptr)
             delete faces[i];
