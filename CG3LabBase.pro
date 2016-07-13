@@ -14,10 +14,14 @@ include (viewer/viewer.pri)
 
 #Cgal module: contains an interface to some functionalities of CGAL library
 #Requires: Common module, libCgal; Optional: Dcel module
-#include (cgal_interface/cgal.pri)
+#include (cgal/cgal.pri)
 
 #Trimesh module: contains a Trimesh data structure
 include (trimesh/trimesh.pri)
+
+#Igl module: coontaint an intergace to some functionalities of libIGL
+#Requires: Common module, libIGL (an environment variable named LIBIGL containing the root directory of the library must be setted)
+#include (igl/igl.pri)
 
 SOURCES += \
     main.cpp

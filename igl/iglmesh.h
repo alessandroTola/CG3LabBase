@@ -2,7 +2,7 @@
 #define IGLMESH_H
 
 #include <Eigen/Core>
-#include "lib/common/serialize.h"
+#include "../common/serialize.h"
 
 
 class IGLMesh : public SerializableObject {
