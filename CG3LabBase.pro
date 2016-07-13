@@ -20,7 +20,9 @@ include (common/common.pri)
 include (viewer/viewer.pri)
 
 #Dcel module: contains a Double Connected-Edge List data structure
-#Requires: Common module, boost; Optional: Cgal module, viewer module
+#Requires: Common module, boost;
+#Optional: Cgal module, viewer module
+#WARNING: to use the dcel module without the viewer, double check the dcel.pri file (qmake bug, sorry!)
 #include (dcel/dcel.pri)
 
 #Cgal module: contains an interface to some functionalities of CGAL library
@@ -28,10 +30,15 @@ include (viewer/viewer.pri)
 #include (cgal/cgal.pri)
 
 #Trimesh module: contains a Trimesh data structure
+#Requires: Common module
+#Oprional: Viewer module
+#WARNING: to use the trimesh module without the viewer, double check the trimesh.pri file (qmake bug, sorry!)
 include (trimesh/trimesh.pri)
 
 #Igl module: coontaint an intergace to some functionalities of libIGL
 #Requires: Common module, libIGL (an environment variable named LIBIGL containing the root directory of the library must be setted)
+#Oprional: Viewer module
+#WARNING: to use the igl module without the viewer, double check the igl.pri file (qmake bug, sorry!)
 #include (igl/igl.pri)
 
 SOURCES += \
