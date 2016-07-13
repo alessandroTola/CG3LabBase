@@ -13,7 +13,7 @@
 ///Test dcel.pri: uncomment to test dcel module
 #include "dcel/dcel.h"
 ///Test dcelviewer.pri: uncomment to test dcel module
-#include "dcel/gui/dcelmanager.h"
+//#include "dcel/gui/dcelmanager.h"
 
 //Test trimesh.pri: uncomment to test trimehs module
 #include "trimesh/trimesh.h"
@@ -29,8 +29,9 @@ int main(int argc, char *argv[]) {
     WindowManager wm(&gui); // Creo un window manager e lo aggiungo alla mainwindow
     int id = gui.addManager(&wm, "Window");
 
-    DcelManager dm(&gui);
-    id = gui.addManager(&dm, "Dcel");
+    //Test dcelmanager.pri
+    //DcelManager dm(&gui);
+    //id = gui.addManager(&dm, "Dcel");
 
     gui.setCurrentIndexToolBox(id); // il window manager sarà quello visualizzato di default
     gui.updateGlCanvas();
