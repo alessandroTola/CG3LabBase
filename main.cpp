@@ -1,4 +1,4 @@
-//Test common.pri:
+///Test common.pri: uncomment to test common module
 #include "common/arrays.h"
 #include "common/bounding_box.h"
 #include "common/comparators.h"
@@ -6,22 +6,36 @@
 #include "common/pickable_object.h"
 #include "common/timer.h"
 
-//Test viewer.pri:
-#include "GUI/mainwindow.h"
-#include "GUI/managers/windowmanager.h"
+///Test viewer.pri: uncomment to test viewer module
+//#include "GUI/mainwindow.h"
+//#include "GUI/managers/windowmanager.h"
+
+///Test dcel.pri: uncomment to test dcel module
+#include "dcel/dcel.h"
+///Test dcelviewer.pri: uncomment to test dcel module
+#include "dcel/gui/dcelmanager.h"
+
+//Test trimesh.pri: uncomment to test trimehs module
+#include "trimesh/trimesh.h"
 
 int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
 
-    MainWindow gui;  // finestra principale, contiene la canvas di QGLViewer
+    ///Test viewer.pri: uncomment to test viewer module
+//    QApplication app(argc, argv);
 
-    // Creo un window manager e lo aggiungo alla mainwindow
-    WindowManager wm(&gui);
-    int id = gui.addManager(&wm, "Window");
+//    MainWindow gui;  // finestra principale, contiene la canvas di QGLViewer
 
-    gui.setCurrentIndexToolBox(id); // il window manager sarà quello visualizzato di default
-    gui.updateGlCanvas();
-    gui.show();
 
-    return app.exec();
+//    WindowManager wm(&gui); // Creo un window manager e lo aggiungo alla mainwindow
+//    int id = gui.addManager(&wm, "Window");
+
+//    DcelManager dm(&gui);
+//    id = gui.addManager(&dm, "Dcel");
+
+//    gui.setCurrentIndexToolBox(id); // il window manager sarà quello visualizzato di default
+//    gui.updateGlCanvas();
+//    gui.show();
+
+//    return app.exec();
+
 }
