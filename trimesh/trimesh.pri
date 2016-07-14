@@ -8,3 +8,8 @@ HEADERS += \
 SOURCES += \
     $$PWD/load_save_trimesh.cpp \
     $$PWD/drawable_trimesh.cpp
+
+contains(DEFINES, VIEWER_DEFINED){
+    #WARNING: BUG on qmake: comment the following line if viewer is not included
+    include ($$PWD/gui/trimeshmanager.pri)
+}
