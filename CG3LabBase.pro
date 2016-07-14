@@ -14,7 +14,7 @@ CONFIG(release, debug|release){
 #only the modules that are required by your module. Also please write here required and optional modules for your module
 
 #Common module: contains classes and common functions used on all the other modules
-#Requires: Eigen
+#Optional: Eigen
 include (common/common.pri)
 
 #Viewer module: contains classes for a simple viewer

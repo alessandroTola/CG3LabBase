@@ -11,7 +11,7 @@
 #include "viewer/managers/windowmanager.h"
 
 ///Test dcel.pri: uncomment to test dcel module
-#include "dcel/dcel.h"
+//#include "dcel/dcel.h"
 ///Test dcelviewer.pri: uncomment to test dcel module
 //#include "dcel/gui/dcelmanager.h"
 
