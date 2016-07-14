@@ -11,14 +11,14 @@
 #include "viewer/managers/windowmanager.h"
 
 ///Test dcel.pri: uncomment to test dcel module
-//#include "dcel/dcel.h"
+#include "dcel/dcel.h"
 ///Test dcelviewer.pri: uncomment to test dcel module
 //#include "dcel/gui/dcelmanager.h"
 
 //Test trimesh.pri: uncomment to test trimehs module
-#include "trimesh/trimesh.h"
+//#include "trimesh/trimesh.h"
 ///Test trimeshviewer.pri: uncomment to test trimesh module
-#include "trimesh/gui/trimeshmanager.h"
+//#include "trimesh/gui/trimeshmanager.h"
 
 int main(int argc, char *argv[]) {
 
@@ -31,14 +31,19 @@ int main(int argc, char *argv[]) {
     WindowManager wm(&gui); // Creo un window manager e lo aggiungo alla mainwindow
     int id = gui.addManager(&wm, "Window");
 
-    //Test trimeshmanager.pri
-    TrimeshManager tm(&gui);
-    id = gui.addManager(&tm, "Trimesh");
+//    //Test trimeshmanager.pri
+//    TrimeshManager tm(&gui);
+//    id = gui.addManager(&tm, "Trimesh");
 
     gui.setCurrentIndexToolBox(id); // il window manager sarà quello visualizzato di default
     gui.updateGlCanvas();
     gui.show();
 
     return app.exec();
+
+    //Dcel d;
+    //std::string s = d.loadFromObjFile("../models/bunny.obj");
+    //std::cerr << s << "\n";
+    return 0;
 
 }
