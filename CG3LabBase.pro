@@ -35,7 +35,7 @@ include (viewer/viewer.pri)
 #Requires: Common module
 #Oprional: Viewer module
 #WARNING: to use the trimesh module without the viewer, double check the trimesh.pri file (qmake bug, sorry!)
-#include (trimesh/trimesh.pri)
+include (trimesh/trimesh.pri)
 
 #Igl module: coontaint an intergace to some functionalities of libIGL
 #Requires: Common module, libIGL (an environment variable named LIBIGL containing the root directory of the library must be setted)
