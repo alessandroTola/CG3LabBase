@@ -17,6 +17,22 @@ TrimeshManager::~TrimeshManager() {
     delete ui;
 }
 
+void TrimeshManager::setButtonsTrimeshLoaded(bool b) {
+    ui->butLoadTrimesh->setEnabled(!b);
+    ui->butSaveTrimesh->setEnabled(b);
+    ui->butClearTrimesh->setEnabled(b);
+    ui->rbPoints->setEnabled(b);
+    ui->rbFlat->setEnabled(b);
+    ui->rbSmooth->setEnabled(b);
+    ui->cbWireframe->setEnabled(b);
+    ui->hsWireframeWidth->setEnabled(b);
+    ui->butSetWireframeColor->setEnabled(b);
+    ui->rbVertexColor->setEnabled(b);
+    ui->rbTriangleColor->setEnabled(b);
+    ui->butSetTcolor->setEnabled(b);
+    ui->butSetVColor->setEnabled(b);
+}
+
 void TrimeshManager::on_butLoadTrimesh_clicked() {
     QString filename = QFileDialog::getOpenFileName(NULL,
                        "Open Trimesh",
@@ -29,6 +45,7 @@ void TrimeshManager::on_butLoadTrimesh_clicked() {
         trimesh = new DrawableTrimesh(filename.toStdString().c_str());
 
         mainWindow->pushObj(trimesh, "Triemsh");
+        setButtonsTrimeshLoaded(true);
         mainWindow->updateGlCanvas();
     }
 }
@@ -43,6 +60,13 @@ void TrimeshManager::on_butSaveTrimesh_clicked() {
     //Trimesh Save missing!!
     //saveObj(filename.toStdString().c_str());
 
+}
+
+void TrimeshManager::on_butClearTrimesh_clicked() {
+    mainWindow->deleteObj(trimesh);
+    delete trimesh;
+    trimesh = nullptr;
+    setButtonsTrimeshLoaded(false);
 }
 
 void TrimeshManager::on_cbWireframe_stateChanged(int arg1) {

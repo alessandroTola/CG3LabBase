@@ -16,11 +16,14 @@ class TrimeshManager : public QFrame
     public:
         explicit TrimeshManager(QWidget *parent = 0);
         ~TrimeshManager();
+        void setButtonsTrimeshLoaded(bool b);
 
     private slots:
         void on_butLoadTrimesh_clicked();
 
         void on_butSaveTrimesh_clicked();
+
+        void on_butClearTrimesh_clicked();
 
         void on_cbWireframe_stateChanged(int arg1);
 
