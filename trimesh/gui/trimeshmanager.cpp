@@ -15,6 +15,10 @@ TrimeshManager::TrimeshManager(QWidget *parent) :
 
 TrimeshManager::~TrimeshManager() {
     delete ui;
+    if (trimesh != nullptr){
+        mainWindow->deleteObj(trimesh);
+        delete trimesh;
+    }
 }
 
 void TrimeshManager::setButtonsTrimeshLoaded(bool b) {
