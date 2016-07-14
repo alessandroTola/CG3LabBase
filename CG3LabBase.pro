@@ -25,7 +25,7 @@ include (viewer/viewer.pri)
 #Requires: Common module, boost;
 #Optional: Cgal module, viewer module
 #WARNING: to use the dcel module without the viewer, double check the dcel.pri file (qmake bug, sorry!)
-#include (dcel/dcel.pri)
+ #include (dcel/dcel.pri)
 
 #Cgal module: contains an interface to some functionalities of CGAL library
 #Requires: Common module, libCgal; Optional: Dcel module
@@ -35,7 +35,7 @@ include (viewer/viewer.pri)
 #Requires: Common module
 #Oprional: Viewer module
 #WARNING: to use the trimesh module without the viewer, double check the trimesh.pri file (qmake bug, sorry!)
-include (trimesh/trimesh.pri)
+#include (trimesh/trimesh.pri)
 
 #Igl module: coontaint an intergace to some functionalities of libIGL
 #Requires: Common module, libIGL (an environment variable named LIBIGL containing the root directory of the library must be setted)

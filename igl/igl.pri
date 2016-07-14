@@ -28,11 +28,13 @@ unix:!macx{
 
 HEADERS += \
     $$PWD/iglinterface.h \
-    $$PWD/iglmesh.h
+    $$PWD/iglmesh.h \
+    $$PWD/drawableiglmesh.h
 
 SOURCES += \
     $$PWD/iglinterface.cpp \
-    $$PWD/iglmesh.cpp
+    $$PWD/iglmesh.cpp \
+    $$PWD/drawableiglmesh.cpp
 
 
 contains(DEFINES, VIEWER_DEFINED){
