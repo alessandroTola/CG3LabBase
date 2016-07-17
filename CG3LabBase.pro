@@ -37,7 +37,7 @@ include (trimesh/trimesh.pri)
 
 #Igl module: coontaint an intergace to some functionalities of libIGL
 #Requires: Common module, libIGL (an environment variable named LIBIGL containing the root directory of the library must be setted)
-#Optional: Viewer module
+#Optional: Viewer module, Cgal module, Dcel module
 #include (igl/igl.pri)
 
 message(Included modules: $$MODULES)
