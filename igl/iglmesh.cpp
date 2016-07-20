@@ -19,8 +19,10 @@ IGLMesh::IGLMesh(const SimpleIGLMesh& m) : SimpleIGLMesh(m) {
     NF.resize(F.rows(), 3);
     igl::per_face_normals(V,F,NF);
     igl::per_vertex_normals(V,F,NV);
-    BBmin = V.colwise().minCoeff();
-    BBmax = V.colwise().maxCoeff();
+    if (V.rows() > 0){
+        BBmin = V.colwise().minCoeff();
+        BBmax = V.colwise().maxCoeff();
+    }
 }
 
 IGLMesh::IGLMesh(const Eigen::MatrixXd& V, const Eigen::MatrixXi& F) : SimpleIGLMesh(V,F) {
@@ -90,6 +92,24 @@ bool IGLMesh::readFromFile(const std::__cxx11::string& filename) {
     return b;
 }
 
+void IGLMesh::setColor(double red, double green, double blue, int f) {
+    if (f < 0){
+        C.resize(F.rows(), 3);
+        for (unsigned int i = 0; i < C.rows(); i++)
+            C.row(i) << red, green, blue;
+    }
+    else{
+        assert(f < F.rows());
+        C.row(f) << red, green, blue;
+    }
+
+}
+
+Vec3 IGLMesh::getNormal(unsigned int f) const {
+    assert (f < F.rows());
+    return std::move(Vec3(NF(f,0), NF(f,1), NF(f,2)));
+}
+
 bool SimpleIGLMesh::readFromFile(const std::__cxx11::string& filename) {
     bool b = igl::read_triangle_mesh(filename, V, F);
     return b;
@@ -101,6 +121,14 @@ bool SimpleIGLMesh::saveOnObj(const std::__cxx11::string& filename) const {
 
 bool SimpleIGLMesh::saveOnPly(const std::__cxx11::string& filename) const {
     return igl::writePLY(filename, V, F);
+}
+
+int SimpleIGLMesh::getNumberFaces() const {
+    return F.rows();
+}
+
+int SimpleIGLMesh::getNumberVertices() const {
+    return V.rows();
 }
 
 #ifdef CGAL_DEFINED
