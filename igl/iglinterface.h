@@ -15,8 +15,7 @@
 #include <iostream>
 
 namespace IGLInterface {
-    bool generateGridAndDistanceField(const std::string &s);
-    void generateGridAndDistanceField(const SimpleIGLMesh &m, Array3D<Pointd>& grid, Array3D<double> &distanceField);
+    void generateGridAndDistanceField(Array3D<Pointd>& grid, Array3D<double> &distanceField, const SimpleIGLMesh &m, double gridUnit = 2, bool integer= true);
 }
 
 
