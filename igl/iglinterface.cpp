@@ -74,4 +74,46 @@ namespace IGLInterface {
         }
         return b;
     }
+
+    void generateGridAndDistanceField(const SimpleIGLMesh &m, Array3D<Pointd> &grid, Array3D<double> &distanceField) {
+
+        // Bounding Box
+        Eigen::RowVector3d Vmin, Vmax;
+        m.getBoundingBox(Vmin, Vmax);
+
+        // create grid GV
+        Eigen::RowVector3i border(10, 10, 10);
+        Eigen::RowVector3i nGmin = (Vmin).cast<int>() - border;
+        Eigen::RowVector3i nGmax = (Vmax).cast<int>() + border; //bounding box of the Grid
+        Eigen::RowVector3i res = (nGmax - nGmin)/2; res(0)+=1; res(1)+=1; res(2)+=1;
+        Eigen::MatrixXd GV(res(0)*res(1)*res(2),3);
+
+        grid.resize(res(0), res(1), res(2));
+
+        int xi = nGmin(0), yi = nGmin(1), zi = nGmin(2);
+        for (int i = 0; i < res(0); ++i){
+            yi = nGmin(1);
+            for (int j = 0; j < res(1); ++j){
+                zi = nGmin(2);
+                for (int k = 0; k < res(2); ++k){
+                    GV.row(k+res(2)*(j + res(1)*i)) = Eigen::RowVector3i(xi,yi,zi).cast<double>();
+                    zi+=2;
+                }
+                yi+=2;
+            }
+            xi += 2;
+        }
+
+        // compute values
+        Eigen::VectorXd S = m.getSignedDistance(GV);
+
+        for (int i = 0; i < res(0); i++){
+            for (int j = 0; j < res(1); j++){
+                for (int k = 0; k < res(2); k++){
+                    grid(i,j,k) = Pointd(GV.row(k+res(2)*(j + res(1)*i)));
+                    distanceField(i,j,k) = S(k+res(2)*(j + res(1)*i));
+                }
+            }
+        }
+    }
 }
