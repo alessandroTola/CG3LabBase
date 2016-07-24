@@ -2,8 +2,8 @@
 #include "common/arrays.h"
 #include "common/bounding_box.h"
 #include "common/comparators.h"
-#include "common/drawable_object.h"
-#include "common/pickable_object.h"
+#include "viewer/interfaces/drawable_object.h"
+#include "viewer/interfaces/pickable_object.h"
 #include "common/timer.h"
 
 ///Test viewer.pri: uncomment to test viewer module
