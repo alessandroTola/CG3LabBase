@@ -126,6 +126,21 @@ bool Dcel::isTriangleMesh() const {
 
 /**
  * \~Italian
+ * @brief Funzione che restituisce la somma delle aree di tutta le facce presenti nella Dcel.
+ * @return L'area dell'intra superficie della mesh
+ * @par Complessità:
+ *      \e O(numFaces)
+ */
+double Dcel::getSurfaceArea() const {
+    double area = 0;
+    for (ConstFaceIterator fit = faceBegin(); fit != faceEnd(); ++fit){
+        area += (*fit)->getArea();
+    }
+    return area;
+}
+
+/**
+ * \~Italian
  * @brief Salva un file nel formato obj rappresentante la mesh contenuta nella Dcel.
  *
  * @todo Il formato OBJ non gestisce buchi all'interno delle facce, per cui, ogni volta che ci sono

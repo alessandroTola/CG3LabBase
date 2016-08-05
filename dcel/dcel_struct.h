@@ -113,19 +113,89 @@ class Dcel : public SerializableObject {
         FaceIterator faceBegin();
         FaceIterator faceEnd();
 
+        class ConstVertexRangeBasedIterator {
+                friend class Dcel;
+            public:
+                ConstVertexIterator begin() const;
+                ConstVertexIterator end() const;
+            private:
+                ConstVertexRangeBasedIterator(const Dcel *d) : d(d) {}
+                const Dcel *d;
+        };
+
+        class ConstHalfEdgeRangeBasedIterator {
+                friend class Dcel;
+            public:
+                ConstHalfEdgeIterator begin() const;
+                ConstHalfEdgeIterator end() const;
+            private:
+                ConstHalfEdgeRangeBasedIterator(const Dcel *d) : d(d) {}
+                const Dcel *d;
+        };
+
+        class ConstFaceRangeBasedIterator {
+                friend class Dcel;
+            public:
+                ConstFaceIterator begin() const;
+                ConstFaceIterator end() const;
+            private:
+                ConstFaceRangeBasedIterator(const Dcel *d) : d(d) {}
+                const Dcel *d;
+        };
+
+        class VertexRangeBasedIterator {
+                friend class Dcel;
+            public:
+                VertexIterator begin();
+                VertexIterator end();
+            private:
+                VertexRangeBasedIterator(Dcel *d) : d(d) {}
+                Dcel *d;
+        };
+
+        class HalfEdgeRangeBasedIterator {
+                friend class Dcel;
+            public:
+                HalfEdgeIterator begin();
+                HalfEdgeIterator end();
+            private:
+                HalfEdgeRangeBasedIterator(Dcel *d) : d(d) {}
+                Dcel *d;
+        };
+
+        class FaceRangeBasedIterator {
+                friend class Dcel;
+            public:
+                FaceIterator begin();
+                FaceIterator end();
+            private:
+                FaceRangeBasedIterator(Dcel *d) : d(d) {}
+                Dcel *d;
+        };
+
+        const ConstVertexRangeBasedIterator vertexIterator() const;
+        VertexRangeBasedIterator vertexIterator();
+
+        const ConstHalfEdgeRangeBasedIterator halfEdgeIterator() const;
+        HalfEdgeRangeBasedIterator halfEdgeIterator();
+
+        const ConstFaceRangeBasedIterator faceIterator() const;
+        FaceRangeBasedIterator faceIterator();
+
         /*****************
         * Public Methods *
         ******************/
 
-        const Vertex* getVertex(unsigned int idVertex)               const;
-        const HalfEdge* getHalfEdge(unsigned int idHalfEdge)         const;
-        const Face* getFace(unsigned int idFace)                     const;
-        BoundingBox getBoundingBox()                        const;
-        bool isTriangleMesh()                               const;
-        void saveOnObjFile(std::string fileNameObj)     const;
-        void saveOnPlyFile(std::string fileNamePly)     const;
-        void saveOnDcelFile(std::string fileNameDcel)   const;
-        void serialize(std::ofstream& binaryFile) const;
+        const Vertex* getVertex(unsigned int idVertex)          const;
+        const HalfEdge* getHalfEdge(unsigned int idHalfEdge)    const;
+        const Face* getFace(unsigned int idFace)                const;
+        BoundingBox getBoundingBox()                            const;
+        bool isTriangleMesh()                                   const;
+        double getSurfaceArea()                                 const;
+        void saveOnObjFile(std::string fileNameObj)             const;
+        void saveOnPlyFile(std::string fileNamePly)             const;
+        void saveOnDcelFile(std::string fileNameDcel)           const;
+        void serialize(std::ofstream& binaryFile)               const;
 
         Vertex* getVertex(unsigned int idVertex);
         HalfEdge* getHalfEdge(unsigned int idHalfEdge);
@@ -232,7 +302,7 @@ inline unsigned int Dcel::getNumberFaces () const {
 inline Dcel::ConstVertexIterator Dcel::vertexBegin() const {
     unsigned int i = 0;
     while (i < vertices.size() && vertices[i] == nullptr) ++i;
-    return ConstVertexIterator(i, vertices);
+    return std::move(ConstVertexIterator(i, vertices));
 }
 
 /**
@@ -241,7 +311,7 @@ inline Dcel::ConstVertexIterator Dcel::vertexBegin() const {
  * @return Un iteratore che punta all'ultimo vertice della Dcel
  */
 inline Dcel::ConstVertexIterator Dcel::vertexEnd() const {
-    return ConstVertexIterator(vertices.size(), vertices);
+    return std::move(ConstVertexIterator(vertices.size(), vertices));
 }
 
 /**
@@ -252,7 +322,7 @@ inline Dcel::ConstVertexIterator Dcel::vertexEnd() const {
 inline Dcel::ConstHalfEdgeIterator Dcel::halfEdgeBegin() const {
     unsigned int i = 0;
     while (i < halfEdges.size() && halfEdges[i] == nullptr) ++i;
-    return ConstHalfEdgeIterator(i, halfEdges);
+    return std::move(ConstHalfEdgeIterator(i, halfEdges));
 }
 
 /**
@@ -261,7 +331,7 @@ inline Dcel::ConstHalfEdgeIterator Dcel::halfEdgeBegin() const {
  * @return Un iteratore che punta all'ultimo half edge della Dcel
  */
 inline Dcel::ConstHalfEdgeIterator Dcel::halfEdgeEnd() const {
-    return ConstHalfEdgeIterator(halfEdges.size(), halfEdges);
+    return std::move(ConstHalfEdgeIterator(halfEdges.size(), halfEdges));
 }
 
 /**
@@ -272,7 +342,7 @@ inline Dcel::ConstHalfEdgeIterator Dcel::halfEdgeEnd() const {
 inline Dcel::ConstFaceIterator Dcel::faceBegin() const {
     unsigned int i = 0;
     while (i < faces.size() && faces[i] == nullptr) ++i;
-    return ConstFaceIterator(i, faces);
+    return std::move(ConstFaceIterator(i, faces));
 }
 
 /**
@@ -280,7 +350,7 @@ inline Dcel::ConstFaceIterator Dcel::faceBegin() const {
  * @return Un iteratore che punta all'ultima faccia della Dcel
  */
 inline Dcel::ConstFaceIterator Dcel::faceEnd() const {
-    return ConstFaceIterator(faces.size(), faces);
+    return std::move(ConstFaceIterator(faces.size(), faces));
 }
 
 /**
@@ -291,7 +361,7 @@ inline Dcel::ConstFaceIterator Dcel::faceEnd() const {
 inline Dcel::VertexIterator Dcel::vertexBegin() {
     unsigned int i = 0;
     while (i < vertices.size() && vertices[i] == nullptr) ++i;
-    return VertexIterator(i, vertices);
+    return std::move(VertexIterator(i, vertices));
 }
 
 /**
@@ -300,7 +370,7 @@ inline Dcel::VertexIterator Dcel::vertexBegin() {
  * @return Un iteratore che punta all'ultimo vertice della Dcel
  */
 inline Dcel::VertexIterator Dcel::vertexEnd() {
-    return VertexIterator(vertices.size(), vertices);
+    return std::move(VertexIterator(vertices.size(), vertices));
 }
 
 /**
@@ -311,7 +381,7 @@ inline Dcel::VertexIterator Dcel::vertexEnd() {
 inline Dcel::HalfEdgeIterator Dcel::halfEdgeBegin() {
     unsigned int i = 0;
     while (i < halfEdges.size() && halfEdges[i] == nullptr) ++i;
-    return HalfEdgeIterator(i, halfEdges);
+    return std::move(HalfEdgeIterator(i, halfEdges));
 }
 
 /**
@@ -320,7 +390,7 @@ inline Dcel::HalfEdgeIterator Dcel::halfEdgeBegin() {
  * @return Un iteratore che punta all'ultimo half edge della Dcel
  */
 inline Dcel::HalfEdgeIterator Dcel::halfEdgeEnd() {
-    return HalfEdgeIterator(halfEdges.size(), halfEdges);
+    return std::move(HalfEdgeIterator(halfEdges.size(), halfEdges));
 }
 
 /**
@@ -331,7 +401,7 @@ inline Dcel::HalfEdgeIterator Dcel::halfEdgeEnd() {
 inline Dcel::FaceIterator Dcel::faceBegin() {
     unsigned int i = 0;
     while (i < faces.size() && faces[i] == nullptr) ++i;
-    return FaceIterator(i, faces);
+    return std::move(FaceIterator(i, faces));
 }
 
 /**
@@ -340,7 +410,79 @@ inline Dcel::FaceIterator Dcel::faceBegin() {
  * @return Un iteratore che punta all'ultima faccia della Dcel
  */
 inline Dcel::FaceIterator Dcel::faceEnd() {
-    return FaceIterator(faces.size(), faces);
+    return std::move(FaceIterator(faces.size(), faces));
+}
+
+inline const Dcel::ConstVertexRangeBasedIterator Dcel::vertexIterator() const {
+    return std::move(ConstVertexRangeBasedIterator(this));
+}
+
+inline Dcel::VertexRangeBasedIterator Dcel::vertexIterator() {
+    return std::move(VertexRangeBasedIterator(this));
+}
+
+inline const Dcel::ConstHalfEdgeRangeBasedIterator Dcel::halfEdgeIterator() const {
+    return std::move(ConstHalfEdgeRangeBasedIterator(this));
+}
+
+inline Dcel::HalfEdgeRangeBasedIterator Dcel::halfEdgeIterator() {
+    return std::move(HalfEdgeRangeBasedIterator(this));
+}
+
+inline const Dcel::ConstFaceRangeBasedIterator Dcel::faceIterator() const {
+    return std::move(ConstFaceRangeBasedIterator(this));
+}
+
+inline Dcel::FaceRangeBasedIterator Dcel::faceIterator() {
+    return std::move(FaceRangeBasedIterator(this));
+}
+
+inline Dcel::ConstVertexIterator Dcel::ConstVertexRangeBasedIterator::begin() const {
+    return std::move(d->vertexBegin());
+}
+
+inline Dcel::ConstVertexIterator Dcel::ConstVertexRangeBasedIterator::end() const {
+    return std::move(d->vertexEnd());
+}
+
+inline Dcel::ConstHalfEdgeIterator Dcel::ConstHalfEdgeRangeBasedIterator::begin() const {
+    return std::move(d->halfEdgeBegin());
+}
+
+inline Dcel::ConstHalfEdgeIterator Dcel::ConstHalfEdgeRangeBasedIterator::end() const {
+    return std::move(d->halfEdgeEnd());
+}
+
+inline Dcel::ConstFaceIterator Dcel::ConstFaceRangeBasedIterator::begin() const {
+    return std::move(d->faceBegin());
+}
+
+inline Dcel::ConstFaceIterator Dcel::ConstFaceRangeBasedIterator::end() const {
+    return std::move(d->faceEnd());
+}
+
+inline Dcel::VertexIterator Dcel::VertexRangeBasedIterator::begin() {
+    return std::move(d->vertexBegin());
+}
+
+inline Dcel::VertexIterator Dcel::VertexRangeBasedIterator::end() {
+    return std::move(d->vertexEnd());
+}
+
+inline Dcel::HalfEdgeIterator Dcel::HalfEdgeRangeBasedIterator::begin() {
+    return std::move(d->halfEdgeBegin());
+}
+
+inline Dcel::HalfEdgeIterator Dcel::HalfEdgeRangeBasedIterator::end() {
+    return std::move(d->halfEdgeEnd());
+}
+
+inline Dcel::FaceIterator Dcel::FaceRangeBasedIterator::begin() {
+    return std::move(d->faceBegin());
+}
+
+inline Dcel::FaceIterator Dcel::FaceRangeBasedIterator::end() {
+    return std::move(d->faceEnd());
 }
 
 #endif // DCEL_STRUCT_H
