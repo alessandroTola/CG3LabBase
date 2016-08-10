@@ -8,6 +8,7 @@
 #include <igl/writeOBJ.h>
 #include <igl/writePLY.h>
 #include <igl/signed_distance.h>
+#include <igl/decimate.h>
 
 #ifdef CGAL_DEFINED
 #include <igl/copyleft/cgal/CSGTree.h>
@@ -20,6 +21,7 @@
 class Dcel;
 #endif
 
+namespace IGLInterface {
 class SimpleIGLMesh : public SerializableObject {
     public:
         SimpleIGLMesh();
@@ -45,6 +47,9 @@ class SimpleIGLMesh : public SerializableObject {
         unsigned int getNumberVertices() const;
         Pointd getVertex(unsigned int i) const;
         void getBoundingBox(Eigen::RowVector3d &BBmin, Eigen::RowVector3d &BBmax) const;
+        void decimate(unsigned int numberDesiredFaces);
+        bool getDecimatedMesh(SimpleIGLMesh& decimated, unsigned int numberDesiredFaces, Eigen::VectorXi &mapping);
+        Eigen::VectorXd getSignedDistance(const Eigen::MatrixXd &points) const;
 
         void translate(const Pointd &p);
         void translate(const Eigen::Vector3d &p);
@@ -59,7 +64,7 @@ class SimpleIGLMesh : public SerializableObject {
         void serialize(std::ofstream& binaryFile) const;
         void deserialize(std::ifstream& binaryFile);
 
-        Eigen::VectorXd getSignedDistance(const Eigen::MatrixXd &points) const;
+
     protected:
         Eigen::Matrix<double, Eigen::Dynamic, 3, Eigen::RowMajor> V;
         Eigen::Matrix<int, Eigen::Dynamic, 3, Eigen::RowMajor> F;
@@ -83,6 +88,8 @@ class IGLMesh : public SimpleIGLMesh {
         void setColor(double red, double green, double blue, int f = -1);
         Vec3 getNormal(unsigned int f) const;
         void getBoundingBox(Eigen::RowVector3d &BBmin, Eigen::RowVector3d &BBmax) const;
+        void decimate(int numberDesiredFaces);
+        bool getDecimatedMesh(IGLMesh& decimated, unsigned int numberDesiredFaces, Eigen::VectorXi &mapping);
 
         #ifdef CGAL_DEFINED
         static void intersection(IGLMesh &result, const IGLMesh &m1, const IGLMesh &m2);
@@ -236,6 +243,7 @@ inline Vec3 IGLMesh::getNormal(unsigned int f) const {
 inline void IGLMesh::getBoundingBox(Eigen::RowVector3d& BBmin, Eigen::RowVector3d& BBmax) const {
     BBmin = this->BBmin;
     BBmax = this->BBmax;
+}
 }
 
 #endif // IGLMESH_H

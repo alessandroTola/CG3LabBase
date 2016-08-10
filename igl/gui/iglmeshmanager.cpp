@@ -23,12 +23,12 @@ void IGLMeshManager::setButtonsMeshLoaded(bool b) {
     ui->smoothIGLMeshRadioButton->setChecked(true);
 }
 
-void IGLMeshManager::setIGLMesh(const IGLMesh& m) {
+void IGLMeshManager::setIGLMesh(const IGLInterface::IGLMesh& m) {
     if (mesh != nullptr){
         mainWindow->deleteObj(mesh);
         delete mesh;
     }
-    mesh = new DrawableIGLMesh(m);
+    mesh = new IGLInterface::DrawableIGLMesh(m);
     mainWindow->pushObj(mesh, "IGLMesh");
     setButtonsMeshLoaded(true);
     mainWindow->updateGlCanvas();
@@ -48,9 +48,8 @@ void IGLMeshManager::on_loadIGLMeshButton_clicked() {
                        "Open IGL Mesh",
                        ".",
                        "OBJ(*.obj);;PLY(*.ply)");
-    if (!filename.isEmpty())
-    {
-        mesh = new DrawableIGLMesh();
+    if (!filename.isEmpty()) {
+        mesh = new IGLInterface::DrawableIGLMesh();
         mesh->readFromFile(filename.toStdString());
         mainWindow->pushObj(mesh, filename.toStdString().substr(filename.toStdString().find_last_of("/") + 1));
         setButtonsMeshLoaded(true);

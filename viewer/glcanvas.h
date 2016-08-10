@@ -10,6 +10,7 @@
 #include <QGLViewer/qglviewer.h>
 #include <QGLViewer/manipulatedCameraFrame.h>
 #include <QGLWidget>
+#include <QKeyEvent>
 #include <vector>
 
 #ifdef __APPLE__
@@ -44,16 +45,16 @@ class GLcanvas : public QGLViewer {
         int getNumberVisibleObjects();
         void postSelection(const QPoint& point);
 
-        int  pushObj(DrawableObject * obj);
+        int  pushObj(const DrawableObject * obj);
         void deleteObj(const DrawableObject* obj);
 
     signals:
-        void objectPicked(int);
+        void objectPicked(unsigned int);
 
     private:
 
         QColor clearColor;
-        std::vector<DrawableObject *> drawlist;
+        std::vector<const DrawableObject *> drawlist;
 
         qglviewer::Vec orig, dir, selectedPoint;
 };
