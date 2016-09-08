@@ -1,4 +1,8 @@
 #include "iglinterface.h"
+#include <igl/copyleft/marching_cubes.h>
+#include <igl/signed_distance.h>
+#include <igl/read_triangle_mesh.h>
+//#include <igl/triangle/triangulate.h>
 
 namespace IGLInterface {
     /**
@@ -11,7 +15,8 @@ namespace IGLInterface {
      *
      * Every point of the grid will be stored on 3D Array grid, and the distance field will be stored on the parallel 3D array distanceField.
      */
-    void generateGridAndDistanceField(Array3D<Pointd> &grid, Array3D<double> &distanceField, const SimpleIGLMesh &m, double gridUnit, bool integer) {
+    template <typename T>
+    void generateGridAndDistanceField(Array3D<Pointd>& grid, Array3D<T> &distanceField, const SimpleIGLMesh &m, double gridUnit, bool integer) {
         assert(gridUnit > 0);
         // Bounding Box
         Eigen::RowVector3d Vmin, Vmax;
@@ -65,4 +70,43 @@ namespace IGLInterface {
             }
         }
     }
+
+    /*std::vector<std::array<Point2D, 3> > triangulate(const std::vector<Point2D>& polygon, const std::vector<std::vector<Point2D> >& holes, double maximumArea, double minimumAngle) {
+        std::stringstream ss;
+        ss << "a" << maximumArea << "q" << minimumAngle;
+        std::string flags = ss.str();
+        // Input polygon
+        Eigen::MatrixXd V;
+        Eigen::MatrixXi E;
+        Eigen::MatrixXd H;
+        int n = polygon.size();
+        H.resize(holes.size(), 2);
+        for (unsigned int i = 0; i < holes.size(); i++){
+            n+= holes[i].size();
+        }
+        V.resize(n,2);
+        E.resize(n,2);
+        for (unsigned int i = 0; i < polygon.size(); i++){
+            V(i,0) = polygon[i].x();
+            V(i,1) = polygon[i].y();
+        }
+        for (j = 0; j < holes.size(); j++){
+            for (k = 0; k < holes[j].size(); k++){
+
+            }
+        }
+
+        // Triangulated interior
+        Eigen::MatrixXd V2;
+        Eigen::MatrixXi F2;
+
+        igl::triangle::triangulate(V,E,H,flags,V2,F2);
+
+
+    }*/
+
 }
+
+template void IGLInterface::generateGridAndDistanceField<double>(Array3D<Pointd>& grid, Array3D<double> &distanceField, const SimpleIGLMesh &m, double gridUnit, bool integer);
+template void IGLInterface::generateGridAndDistanceField<float>(Array3D<Pointd>& grid, Array3D<float> &distanceField, const SimpleIGLMesh &m, double gridUnit, bool integer);
+template void IGLInterface::generateGridAndDistanceField<int>(Array3D<Pointd>& grid, Array3D<int> &distanceField, const SimpleIGLMesh &m, double gridUnit, bool integer);

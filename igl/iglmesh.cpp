@@ -57,7 +57,7 @@ namespace IGLInterface {
         Eigen::VectorXi I;
         Eigen::MatrixXd C,N;
         igl::signed_distance(points,V,F,igl::SIGNED_DISTANCE_TYPE_PSEUDONORMAL,S,I,C,N);
-        return std::move(S);
+        return S;
     }
 
     void SimpleIGLMesh::translate(const Pointd& p) {
@@ -73,7 +73,7 @@ namespace IGLInterface {
     void SimpleIGLMesh::rotate(const Eigen::Matrix3d& m, const Eigen::Vector3d& centroid) {
         V.rowwise() -= centroid.transpose();
         for (unsigned int i = 0; i < V.rows(); i++){
-            V.row(i) = V.row(i) * m;
+            V.row(i) =  m * V.row(i).transpose();
         }
         V.rowwise() += centroid.transpose();
     }
@@ -168,6 +168,7 @@ namespace IGLInterface {
             i++;
         }
     }
+
     #endif
 
     bool IGLMesh::readFromFile(const std::__cxx11::string& filename) {

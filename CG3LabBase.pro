@@ -44,6 +44,7 @@ include (trimesh/trimesh.pri)
 #Optional: Viewer module, Cgal module, Dcel module
 #include (igl/igl.pri)
 
+#comment next line if you don't want to see the message that shows included modules
 message(Included modules: $$MODULES)
 
 SOURCES += \

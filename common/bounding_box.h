@@ -54,6 +54,10 @@ class BoundingBox : public SerializableObject{
         const double& getMaxX()    const;
         const double& getMaxY()    const;
         const double& getMaxZ()    const;
+        double getLengthX()        const;
+        double getLengthY()        const;
+        double getLengthZ()        const;
+
         Pointd  center()    const;
         double diag()       const;
         bool isStrictlyIntern(const Pointd& p)     const;
@@ -229,6 +233,18 @@ inline const double& BoundingBox::getMaxZ() const {
     return max.z();
 }
 
+inline double BoundingBox::getLengthX() const {
+    return max.x() - min.x();
+}
+
+inline double BoundingBox::getLengthY() const {
+    return max.y() - min.y();
+}
+
+inline double BoundingBox::getLengthZ() const {
+    return max.z() - min.z();
+}
+
 /**
  * \~English
  * @brief Calculates the center of the bounding box
@@ -239,7 +255,7 @@ inline const double& BoundingBox::getMaxZ() const {
  * @return Il punto al centro del bounding box
  */
 inline Pointd BoundingBox::center() const {
-    return std::move((min + max) * 0.5);
+    return (min + max) * 0.5;
 }
 
 /**
