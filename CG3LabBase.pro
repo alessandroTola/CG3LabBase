@@ -32,7 +32,7 @@ include (viewer/viewer.pri)
 
 #Cgal module: contains an interface to some functionalities of CGAL library
 #Requires: Common module, libCgal; Optional: Dcel module
-#include (cgal/cgal.pri)
+include (cgal/cgal.pri)
 
 #Trimesh module: contains a Trimesh data structure
 #Requires: Common module
