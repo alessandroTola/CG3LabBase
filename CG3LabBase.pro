@@ -32,7 +32,7 @@ include (viewer/viewer.pri)
 
 #Cgal module: contains an interface to some functionalities of CGAL library
 #Requires: Common module, libCgal; Optional: Dcel module
-include (cgal/cgal.pri)
+#include (cgal/cgal.pri)
 
 #Trimesh module: contains a Trimesh data structure
 #Requires: Common module
@@ -42,7 +42,7 @@ include (trimesh/trimesh.pri)
 #Igl module: coontaint an intergace to some functionalities of libIGL
 #Requires: Common module, libIGL (an environment variable named LIBIGL containing the root directory of the library must be setted)
 #Optional: Viewer module, Cgal module, Dcel module
-include (igl/igl.pri)
+#include (igl/igl.pri)
 
 #comment next line if you don't want to see the message that shows included modules
 message(Included modules: $$MODULES)

@@ -1942,7 +1942,7 @@ void Dcel::deserialize(std::ifstream &binaryFile) {
     }
 }
 
-std::__cxx11::string Dcel::loadFromOldDcelFile(const std::__cxx11::string& filename) {
+std::string Dcel::loadFromOldDcelFile(const std::string& filename) {
     clear();
 
     std::ifstream myfile;
