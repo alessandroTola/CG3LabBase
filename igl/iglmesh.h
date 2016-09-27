@@ -7,6 +7,8 @@
 #include <igl/per_face_normals.h>
 #include <igl/writeOBJ.h>
 #include <igl/writePLY.h>
+#include <igl/writeOFF.h>
+#include <igl/writeSTL.h>
 #include <igl/signed_distance.h>
 #include <igl/decimate.h>
 #include <igl/remove_duplicates.h>
@@ -54,6 +56,8 @@ namespace IGLInterface {
             bool readFromFile(const std::string &filename);
             bool saveOnObj(const std::string &filename) const;
             bool saveOnPly(const std::string &filename) const;
+            bool saveOnOff(const std::string &filename) const;
+            bool saveOnStl(const std::string &filename) const;
             void clear();
             unsigned int getNumberFaces() const;
             unsigned int getNumberVertices() const;
@@ -232,6 +236,14 @@ namespace IGLInterface {
 
     inline bool SimpleIGLMesh::saveOnPly(const std::string& filename) const {
         return igl::writePLY(filename, V, F);
+    }
+
+    inline bool SimpleIGLMesh::saveOnOff(const std::string& filename) const {
+        return igl::writeOFF(filename, V, F);
+    }
+
+    inline bool SimpleIGLMesh::saveOnStl(const std::__cxx11::string& filename) const {
+        return igl::writeSTL(filename, V, F);
     }
 
     inline void SimpleIGLMesh::clear() {
