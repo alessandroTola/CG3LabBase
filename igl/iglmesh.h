@@ -328,6 +328,8 @@ namespace IGLInterface {
     inline void IGLMesh::updateVertexAndFaceNormals() {
         updateFaceNormals();
         updateVertexNormals();
+        CF.conservativeResize(F.rows(), Eigen::NoChange);
+        CV.conservativeResize(V.rows(), Eigen::NoChange);
     }
 
     inline void IGLMesh::clear() {
