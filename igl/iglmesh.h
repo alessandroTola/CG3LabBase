@@ -43,6 +43,7 @@ namespace IGLInterface {
             SimpleIGLMesh(const Trimesh<T>& trimesh);
             #endif
             void setVertex(unsigned int i, const Eigen::VectorXd &p);
+            void setVertex(unsigned int i, const Pointd &p);
             void setVertex(unsigned int i, double x, double y, double z);
             void addVertex(const Eigen::VectorXd &p);
             void addVertex(double x, double y, double z);
@@ -64,6 +65,7 @@ namespace IGLInterface {
             Pointd getVertex(unsigned int i) const;
             Pointi getFace(unsigned int i) const;
             void getBoundingBox(Eigen::RowVector3d &BBmin, Eigen::RowVector3d &BBmax) const;
+            BoundingBox getBoundingBox() const;
             void decimate(unsigned int numberDesiredFaces);
             bool getDecimatedMesh(SimpleIGLMesh& decimated, unsigned int numberDesiredFaces, Eigen::VectorXi &mapping);
             Eigen::VectorXd getSignedDistance(const Eigen::MatrixXd &points) const;
@@ -72,15 +74,19 @@ namespace IGLInterface {
             void translate(const Pointd &p);
             void translate(const Eigen::Vector3d &p);
             void rotate(const Eigen::Matrix3d &m, const Eigen::Vector3d& centroid = Eigen::Vector3d::Zero());
+            void scale(const BoundingBox& newBoundingBox);
             #ifdef CGAL_DEFINED
             static void intersection(SimpleIGLMesh &result, const SimpleIGLMesh &m1, const SimpleIGLMesh &m2);
+            static SimpleIGLMesh intersection(const SimpleIGLMesh &m1, const SimpleIGLMesh &m2);
             static void difference(SimpleIGLMesh &result, const SimpleIGLMesh &m1, const SimpleIGLMesh &m2);
+            static SimpleIGLMesh difference(const SimpleIGLMesh &m1, const SimpleIGLMesh &m2);
             static void unionn(SimpleIGLMesh &result, const SimpleIGLMesh &m1, const SimpleIGLMesh &m2);
+            static SimpleIGLMesh unionn(const SimpleIGLMesh &m1, const SimpleIGLMesh &m2);
             #endif
 
             // SerializableObject interface
             void serialize(std::ofstream& binaryFile) const;
-            void deserialize(std::ifstream& binaryFile);
+            bool deserialize(std::ifstream& binaryFile);
 
 
         protected:
@@ -115,19 +121,23 @@ namespace IGLInterface {
             Vec3 getNormal(unsigned int f) const;
             QColor getColor(unsigned int f) const;
             void getBoundingBox(Eigen::RowVector3d &BBmin, Eigen::RowVector3d &BBmax) const;
-            BoundingBox getBoundingBox();
+            BoundingBox getBoundingBox() const;
             void decimate(int numberDesiredFaces);
             bool getDecimatedMesh(IGLMesh& decimated, unsigned int numberDesiredFaces, Eigen::VectorXi &mapping);
+            void scale(const BoundingBox& newBoundingBox);
             Eigen::MatrixXd getVerticesColorMatrix() const;
 
-            bool readFromPly(const std::string &filename);
-            bool saveOnPly(const std::string &filename);
+            bool saveOnPly(const std::string &filename) const;
             void deleteVerticesLowerThanY(double y);
+
 
             #ifdef CGAL_DEFINED
             static void intersection(IGLMesh &result, const IGLMesh &m1, const IGLMesh &m2);
+            static IGLMesh intersection(const IGLMesh &m1, const IGLMesh &m2);
             static void difference(IGLMesh &result, const IGLMesh &m1, const IGLMesh &m2);
+            static IGLMesh difference(const IGLMesh &m1, const IGLMesh &m2);
             static void unionn(IGLMesh &result, const IGLMesh &m1, const IGLMesh &m2);
+            static IGLMesh unionn(const IGLMesh &m1, const IGLMesh &m2);
             #endif
 
             #ifdef DCEL_DEFINED
@@ -135,7 +145,7 @@ namespace IGLInterface {
             #endif
 
             void serialize(std::ofstream& binaryFile) const;
-            void deserialize(std::ifstream& binaryFile);
+            bool deserialize(std::ifstream& binaryFile);
 
         protected:
 
@@ -178,6 +188,11 @@ namespace IGLInterface {
         assert (i < V.rows());
         assert (p.size() == 3);
         V.row(i) =  p;
+    }
+
+    inline void SimpleIGLMesh::setVertex(unsigned int i, const Pointd& p) {
+        assert (i < V.rows());
+        V(i,0) = p[0]; V(i,1) = p[1]; V(i,2) = p[2];
     }
 
     inline void SimpleIGLMesh::setVertex(unsigned int i, double x, double y, double z) {
@@ -274,14 +289,29 @@ namespace IGLInterface {
         BBmax = V.colwise().maxCoeff();
     }
 
+    inline BoundingBox SimpleIGLMesh::getBoundingBox() const {
+        Eigen::RowVector3d BBmin, BBmax;
+        BBmin = V.colwise().minCoeff();
+        BBmax = V.colwise().maxCoeff();
+        BoundingBox  bb;
+        bb.setMin(BBmin(0), BBmin(1), BBmin(2));
+        bb.setMax(BBmax(0), BBmax(1), BBmax(2));
+        return bb;
+    }
+
     inline void SimpleIGLMesh::serialize(std::ofstream& binaryFile) const {
         Serializer::serialize(V, binaryFile);
         Serializer::serialize(F, binaryFile);
     }
 
-    inline void SimpleIGLMesh::deserialize(std::ifstream& binaryFile) {
-        Serializer::deserialize(V, binaryFile);
-        Serializer::deserialize(F, binaryFile);
+    inline bool SimpleIGLMesh::deserialize(std::ifstream& binaryFile) {
+        SimpleIGLMesh tmp;
+        if (Serializer::deserialize(tmp.V, binaryFile) &&
+            Serializer::deserialize(tmp.F, binaryFile)){
+            *this = std::move(tmp);
+            return true;
+        }
+        return false;
     }
 
 

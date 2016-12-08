@@ -3,6 +3,7 @@
 
 #include <QFileDialog>
 #include "common/utils.h"
+#include "igl/utils.h"
 
 BooleansManager::BooleansManager(QWidget *parent) :
     QFrame(parent),
@@ -423,7 +424,7 @@ void BooleansManager::on_rotateButton_clicked() {
     lastAxis = axis;
     lastAngle = angle;
     Eigen::Matrix3d m;
-    getRotationMatrix(axis, angle, m);
+    Common::getRotationMatrix(axis, angle, m);
     if (ui->mesh1CheckBox->isChecked() && meshes[0] != nullptr){
         meshes[0]->rotate(m);
     }
@@ -439,7 +440,7 @@ void BooleansManager::on_rotateButton_clicked() {
 
 void BooleansManager::on_undoRotateButton_clicked() {
     Eigen::Matrix3d m;
-    getRotationMatrix(-lastAxis, lastAngle, m);
+    Common::getRotationMatrix(-lastAxis, lastAngle, m);
     if (ui->mesh1CheckBox->isChecked() && meshes[0] != nullptr){
         meshes[0]->rotate(m);
     }

@@ -133,6 +133,7 @@ class Dcel : public SerializableObject {
         BoundingBox getBoundingBox()                            const;
         bool isTriangleMesh()                                   const;
         double getSurfaceArea()                                 const;
+        double getAverageHalfEdgesLength()                      const;
         void saveOnObjFile(std::string fileNameObj)             const;
         void saveOnPlyFile(std::string fileNamePly)             const;
         void saveOnDcelFile(std::string fileNameDcel)           const;
@@ -168,12 +169,11 @@ class Dcel : public SerializableObject {
         unsigned int triangulateFace(Dcel::Face* f);
         void triangulate();
         #endif
+        bool loadFromFile(const std::string& filename);
         std::string loadFromObjFile(const std::string& filename, bool regular = true);
         std::string loadFromPlyFile(const std::string& filename, bool regular = true);
         std::string loadFromDcelFile(const std::string& filename);
-        void deserialize(std::ifstream& binaryFile);
-        std::string loadFromOldDcelFile(const std::string& filename);
-        std::string loadFromOldOldDcelFile(const std::string& filename);
+        bool deserialize(std::ifstream& binaryFile);
         Dcel& operator= (const Dcel& dcel);
         Dcel& operator= (Dcel&& dcel);
         #ifdef IGL_DEFINED
