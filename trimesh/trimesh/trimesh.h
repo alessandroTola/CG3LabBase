@@ -3,8 +3,8 @@
  @copyright Marco Livesu 2014.
 */
 
-#ifndef TRIMESH_H
-#define TRIMESH_H
+#ifndef OLDTRIMESH_H
+#define OLDTRIMESH_H
 
 #include <assert.h>
 #include <float.h>
@@ -13,12 +13,11 @@
 #include <set>
 #include <stdlib.h>
 
-#include "../common/bounding_box.h"
-#include "../common/point.h"
+#include <common/bounding_box.h>
 #include "load_save_trimesh.h"
 
 #ifdef IGL_DEFINED
-#include "../igl/iglmesh.h"
+#include <igl/iglmesh.h>
 #endif
 
 //using namespace std;
@@ -354,4 +353,4 @@ template<typename real> class Trimesh
 
 };
 
-#endif // TRIMESH_H
+#endif // OLDTRIMESH_H
