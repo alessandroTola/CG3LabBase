@@ -1,18 +1,42 @@
 #ifndef DRAWMANAGER_H
 #define DRAWMANAGER_H
 
-#include <QFrame>
+#include <viewer/interfaces/drawable_mesh.h>
 #include <viewer/mainwindow.h>
 
-#include <Qt3DExtras/QCylinderMesh>
-#include <QtCore/QObject>
+#include <eigenmesh/eigenmesh/gui/drawableeigenmesh.h>
+#include <eigenmesh/eigenmesh/eigenmesh.h>
+#include <Eigen/Dense>
 
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/aabbtree.h>
+#include <CGAL/cgalinterface.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Cartesian/Cartesian_base.h>
+
+#include <QFrame>
+
+#ifdef __APPLE__
+#include <gl.h>
+#else
+#include <GL/gl.h>
+#endif
 
 
 class QLineEdit;
+using namespace Eigen;
+using namespace CGAL;
 
 namespace Ui {
     class DrawManager;
+}
+
+namespace Convert {
+    typedef CGAL::Simple_cartesian<double> K;
+    typedef CGAL::Surface_mesh<K::Point_3>                               Mesh;
+
+    Surface_mesh<K::Point_3>  convertEigenMesh(DrawableEigenMesh *meshEigenOrigin);
+
 }
 
 class DrawManager : public QFrame
@@ -33,13 +57,19 @@ class DrawManager : public QFrame
 
         void on_pushButton_2_clicked();
 
-private:
+        void on_pushButton_clicked();
+
+        void on_pushButton_3_clicked();
+
+
+
+    private:
 
         Ui::DrawManager *ui;
         MainWindow* mainWindow;
-        QVector3D *vectorUser;
-        Qt3DCore::QEntity *rootEntity;
-        Qt3DCore::QEntity *cylinderEntity;
+        Vec3 *vectorUser;
+        DrawableEigenMesh* cylinder;
+        DrawableEigenMesh* meshEigen;
 
 };
 
