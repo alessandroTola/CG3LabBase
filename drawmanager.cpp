@@ -11,8 +11,6 @@
 
 #include <CGAL/Surface_mesh.h>
 
-typedef CGAL::Simple_cartesian<double> K;
-typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 typedef Mesh::Vertex_index vertex_descriptor;
 typedef Mesh::Face_index face_descriptor;
 typedef Mesh::Vertex_range verticesIter;
@@ -61,7 +59,6 @@ void DrawManager::on_z_editingFinished()
     QLineEdit *zCordinate = new QLineEdit;
     zCordinate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, zCordinate));
     vectorUser->setZ(ui->z->text().toDouble());
-    //mainWindow->pushObj(vectorUser, "Draw axis");
 
 }
 
@@ -98,22 +95,29 @@ void DrawManager::on_pushButton_clicked()
 
 void DrawManager::on_pushButton_3_clicked()
 {
-    Mesh mesh = Convert::convertEigenMesh(meshEigen);
+    Mesh mesh = convertEigenMesh(meshEigen);
+    /*typedef SM_Halfedge_index Halfedge_index;
+    boost::uint32_t id = 34;
+    Halfedge_index sdad = Halfedge_index(id) ;
+    QString prova = QString::number(mesh.edge(sdad));
+    ui->x->setText(prova + " ciao");*/
+
 
 }
 
-Surface_mesh<K::Point_3> Convert::convertEigenMesh (DrawableEigenMesh *meshEigenOrigin){
+Surface_mesh<K::Point_3> DrawManager::convertEigenMesh (DrawableEigenMesh *meshEigenOrigin){
 
     Mesh mesh;
 
     int nVertex = meshEigenOrigin->getNumberVertices();
     int nFaces = meshEigenOrigin->getNumberFaces();
+
     std::vector<vertex_descriptor> vecIter;
+
     for(int i=0; i<nVertex;i++){
         Point<double> v = meshEigenOrigin->getVertex(i);
         vertex_descriptor vert = mesh.add_vertex(K::Point_3(v.x(),v.y(),v.z()));
         vecIter.push_back(vert);
-
     }
 
     for(int i=0; i<nFaces;i++){
@@ -123,6 +127,7 @@ Surface_mesh<K::Point_3> Convert::convertEigenMesh (DrawableEigenMesh *meshEigen
         vertex_descriptor z = vecIter[f.z()];
         mesh.add_face(u, v, z);
     }
+
 
     return mesh;
 }

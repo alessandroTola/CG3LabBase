@@ -31,13 +31,8 @@ namespace Ui {
     class DrawManager;
 }
 
-namespace Convert {
-    typedef CGAL::Simple_cartesian<double> K;
-    typedef CGAL::Surface_mesh<K::Point_3>                               Mesh;
-
-    Surface_mesh<K::Point_3>  convertEigenMesh(DrawableEigenMesh *meshEigenOrigin);
-
-}
+typedef Simple_cartesian<double>     K;
+typedef Surface_mesh<K::Point_3>  Mesh;
 
 class DrawManager : public QFrame
 {
@@ -61,6 +56,7 @@ class DrawManager : public QFrame
 
         void on_pushButton_3_clicked();
 
+        Surface_mesh<K::Point_3>  convertEigenMesh(DrawableEigenMesh *meshEigenOrigin);
 
 
     private:
