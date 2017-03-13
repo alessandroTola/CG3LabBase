@@ -11,8 +11,10 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/aabbtree.h>
 #include <CGAL/cgalinterface.h>
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Cartesian/Cartesian_base.h>
+#include <CGAL/Surface_mesh/IO.h>
+#include <CGAL/Surface_mesh/Surface_mesh.h>
+
 
 #include <QFrame>
 
@@ -33,6 +35,7 @@ namespace Ui {
 
 typedef Simple_cartesian<double>     K;
 typedef Surface_mesh<K::Point_3>  Mesh;
+typedef IO output;
 
 class DrawManager : public QFrame
 {
@@ -50,22 +53,25 @@ class DrawManager : public QFrame
 
         void on_z_editingFinished();
 
-        void on_pushButton_2_clicked();
+        void on_drawAxis_clicked();
 
-        void on_pushButton_clicked();
+        void on_loadMesh_clicked();
 
-        void on_pushButton_3_clicked();
+        void on_eigenToCgal_clicked();
 
-        Surface_mesh<K::Point_3>  convertEigenMesh(DrawableEigenMesh *meshEigenOrigin);
+        void convertEigenMesh(DrawableEigenMesh *meshEigenOrigin);
 
+        void on_drawCilinder_clicked();
 
-    private:
+        void on_saveMeshCgal_clicked();
+
+private:
 
         Ui::DrawManager *ui;
         MainWindow* mainWindow;
-        Vec3 *vectorUser;
-        DrawableEigenMesh* cylinder;
-        DrawableEigenMesh* meshEigen;
+        Vec3 vectorUser;
+        DrawableEigenMesh meshEigen;
+        Mesh mesh;
 
 };
 
