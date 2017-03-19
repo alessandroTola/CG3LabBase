@@ -64,52 +64,65 @@ class DrawManager : public QFrame
 
         void on_x_editingFinished();
 
-        void on_y_editingFinished();
+        void on_y_editingFinished               ();
 
-        void on_z_editingFinished();
+        void on_z_editingFinished               ();
 
-        void on_drawAxis_clicked();
+        void on_drawAxis_clicked                ();
 
-        void on_loadMesh_clicked();
+        void on_loadMesh_clicked                ();
 
-        void on_eigenToCgal_clicked();
+        void on_eigenToCgal_clicked             ();
 
-        void convertEigenMesh(DrawableEigenMesh *meshEigenOrigin);
+        void convertEigenMesh                   (DrawableEigenMesh *meshEigenOrigin);
 
-        void on_clearAxis_clicked();
+        void on_clearAxis_clicked               ();
 
-        void on_saveMeshCgal_clicked();
+        void on_saveMeshCgal_clicked            ();
 
-        void on_nPlane_editingFinished();
+        void on_nPlane_editingFinished          ();
 
-        void setButtonMeshLoaded(bool b);
+        void setButtonMeshLoaded                (bool b);
 
-        void on_writeCoordinate_stateChanged(int arg1);
+        void on_writeCoordinate_stateChanged    (int arg1);
 
-        void on_showAxis_stateChanged(int arg1);
+        void on_showAxis_stateChanged           (int arg1);
 
-        void on_drawPolyline_clicked();
+        void on_xAxis_toggled                   (bool checked);
 
-        void on_xAxis_toggled(bool checked);
+        void on_yAxis_toggled                   (bool checked);
 
-        void on_yAxis_toggled(bool checked);
+        void on_zAxis_toggled                   (bool checked);
 
-        void on_zAxis_toggled(bool checked);
+        void on_rotationAxis_clicked            ();
 
-        void on_rotationAxis_clicked();
+        void on_clearMesh_clicked               ();
 
-        void on_clearMesh_clicked();
+        void on_xCoord_editingFinished();
+
+        void on_yCoord_editingFinished();
+
+        void on_serchPoint_clicked();
+
+        void on_pushButton_clicked();
+
+        void on_sphere_editingFinished();
+
+        void on_cylinder_editingFinished();
 
 private:
 
         Ui::DrawManager *ui;
         MainWindow* mainWindow;
-        Vec3 vectorUser;
+        Pointd vectorUser;
+        Pointd point;
+        Vec2 coordPlane;
         int nPlaneUser;
         int selection;
         DrawableEigenMesh* meshEigen;
         Mesh mesh;
         PolylinesCheck polyline;
+        double cylinder, sphere;
 
 };
 

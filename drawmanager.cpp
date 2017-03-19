@@ -25,13 +25,20 @@ void DrawManager::setButtonMeshLoaded(bool b){
     ui->yAxis->setEnabled(b);
     ui->zAxis->setEnabled(b);
     ui->eigenToCgal->setEnabled(b);
-    ui->label_4->setEnabled(b);
+    ui->nPlaneLabel->setEnabled(b);
     ui->nPlane->setEnabled(b);
     ui->writeCoordinate->setEnabled(b);
     ui->showAxis->setEnabled(b);
     ui->clearMesh->setEnabled(b);
     ui->loadMesh->setEnabled(false);
     ui->rotationAxis->setEnabled(b);
+    ui->xLabel->setEnabled(b);
+    ui->yLabel->setEnabled(b);
+    ui->xCoord->setEnabled(b);
+    ui->yCoord->setEnabled(b);
+    ui->serchPoint->setEnabled(b);
+    ui->selectLabel->setEnabled(b);
+
 }
 
 void DrawManager::on_x_editingFinished()
@@ -89,19 +96,13 @@ void DrawManager::on_loadMesh_clicked()
         setButtonMeshLoaded(true);
         mainWindow->updateGlCanvas();
     }
+    sphere = 0.01;
+    cylinder = 0.01;
 }
 
 void DrawManager::on_eigenToCgal_clicked()
 {
     convertEigenMesh(meshEigen);
-    ui->drawPolyline->setEnabled(true);
-    /*typedef SM_Halfedge_index Halfedge_index;
-    typedef SM_Vertex_index verIndex;
-    boost::uint32_t id = 34;
-    Halfedge_index sdad = Halfedge_index(id) ;
-    verIndex ide = 0;
-    QString prova = QString::number(mesh->face());
-    ui->x->setText(prova + " ciao");*/
 }
 
 void DrawManager::convertEigenMesh (DrawableEigenMesh *meshEigenOrigin){
@@ -170,9 +171,9 @@ void DrawManager::on_writeCoordinate_stateChanged(int arg1)
 {
     if(arg1 == Qt::Checked){
         ui->coordinate->setEnabled(true);
-        ui->label_2->setEnabled(true);
-        ui->label_3->setEnabled(true);
-        ui->label->setEnabled(true);
+        ui->labelX->setEnabled(true);
+        ui->labelY->setEnabled(true);
+        ui->labelZ->setEnabled(true);
         ui->x->setEnabled(true);
         ui->y->setEnabled(true);
         ui->z->setEnabled(true);
@@ -187,9 +188,9 @@ void DrawManager::on_writeCoordinate_stateChanged(int arg1)
         ui->yAxis->setEnabled(true);
         ui->zAxis->setEnabled(true);
         ui->coordinate->setEnabled(false);
-        ui->label_2->setEnabled(false);
-        ui->label_3->setEnabled(false);
-        ui->label->setEnabled(false);
+        ui->labelX->setEnabled(false);
+        ui->labelY->setEnabled(false);
+        ui->labelZ->setEnabled(false);
         ui->x->setEnabled(false);
         ui->y->setEnabled(false);
         ui->z->setEnabled(false);
@@ -202,11 +203,6 @@ void DrawManager::on_showAxis_stateChanged(int arg1)
     if (arg1 == Qt::Checked) mainWindow->drawAxis(true);
     else mainWindow->drawAxis(false);
     mainWindow->updateGlCanvas();
-}
-
-void DrawManager::on_drawPolyline_clicked()
-{
-
 }
 
 void DrawManager::on_xAxis_toggled(bool checked)
@@ -236,22 +232,32 @@ void DrawManager::on_rotationAxis_clicked()
 
     mainWindow->enableDebugObjects();
     mainWindow->clearDebugSpheres();
-    mainWindow->addDebugSphere(Pointd(polyline.getMin().x(), polyline.getMin().y(), polyline.getMin().z()),
-                               0.01,
-                               QColor("#ff0000"),50);
-    mainWindow->addDebugSphere(Pointd(polyline.getMax().x(), polyline.getMax().y(), polyline.getMax().z()),
-                               0.01,
-                               QColor("#ff0000"),50);
-    PlaneC plane(polyline.getMax(), polyline.getMin(), PointC(0,0,0));
+
+    //PlaneC plane(polyline.getMax(), polyline.getMin(), PointC(0,0,0));
+    PointC punto(polyline.getMin().x(), polyline.getMin().y(), polyline.getMin().z()+1);
+    mainWindow->addDebugSphere(Pointd(polyline.getMin().x(), polyline.getMin().y(), polyline.getMin().z()),0.01,QColor("#ff0000"),50);
+    mainWindow->addDebugSphere(Pointd(polyline.getMax().x(), polyline.getMax().y(), polyline.getMax().z()),0.01,QColor("#ff0000"),50);
+    mainWindow->addDebugSphere(Pointd(punto.x(), punto.y(), punto.z()), 0.01, QColor("#ff0000"),50);
+
+    //Creo il piano passante per 3 punti
+    PlaneC plane(polyline.getMax(), polyline.getMin(), punto);
+
     K::Vector_3 chePalle(plane.orthogonal_vector());
     Vec3 normalPlane(chePalle.x(), chePalle.y(), chePalle.z() );
 
-    polyline.setPoly(mesh, normalPlane, 0);
+    polyline.setNormal(normalPlane);
+    polyline.setD();
+    polyline.setPoly(mesh, normalPlane);
 
-    for(int i = 0; i < polyline.poly.size(); i++){
-        for(int j = 0; j < polyline.poly[i].size(); j++){
+    for(unsigned int i = 0; i < polyline.poly.size(); i++){
+        for(unsigned int j = 0; j < polyline.poly[i].size(); j++){
             mainWindow->addDebugSphere(polyline.poly[i][j], 0.01, QColor("#ff0000"),50);
         }
+    }
+    polyline.checkPolyline();
+    qDebug() << polyline.poly2d[0].x();
+    for(unsigned int i = 0; i <polyline.poly2d.size(); i++) {
+        mainWindow->addDebugSphere(Pointd(polyline.poly2d[i].x(),polyline.poly2d[i].y(),0) , 0.01, QColor("#ff0000"),50);
     }
 }
 
@@ -262,7 +268,7 @@ void DrawManager::on_clearMesh_clicked()
     ui->yAxis->setEnabled(false);
     ui->zAxis->setEnabled(false);
     ui->eigenToCgal->setEnabled(false);
-    ui->label_4->setEnabled(false);
+    ui->nPlaneLabel->setEnabled(false);
     ui->nPlane->setEnabled(false);
     ui->writeCoordinate->setEnabled(false);
     ui->showAxis->setEnabled(false);
@@ -270,7 +276,86 @@ void DrawManager::on_clearMesh_clicked()
     ui->rotationAxis->setEnabled(false);
     ui->loadMesh->setEnabled(true);
     mainWindow->deleteObj(meshEigen);
+    mainWindow->clearDebugCylinders();
+    mainWindow->clearDebugSpheres();
     delete meshEigen;
     meshEigen = nullptr;
 
+}
+
+void DrawManager::on_xCoord_editingFinished()
+{
+    QLineEdit *xCordinate = new QLineEdit;
+    xCordinate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, xCordinate));
+    coordPlane.setXCoord(ui->xCoord->text().toDouble());
+}
+
+void DrawManager::on_yCoord_editingFinished()
+{
+    QLineEdit *yCordinate = new QLineEdit;
+    yCordinate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, yCordinate));
+    coordPlane.setYCoord(ui->yCoord->text().toDouble());
+}
+
+void DrawManager::on_serchPoint_clicked()
+{
+    switch (selection) {
+    case 0:
+        vectorUser.setX(-100);
+        vectorUser.setY(coordPlane.y());
+        vectorUser.setZ(coordPlane.x());
+        point.setX(100);
+        point.setY(coordPlane.y());
+        point.setZ(coordPlane.x());
+        break;
+    case 1:
+        vectorUser.setX(coordPlane.x());
+        vectorUser.setY(-100);
+        vectorUser.setZ(coordPlane.y());
+        point.setX(coordPlane.x());
+        point.setY(100);
+        point.setZ(coordPlane.y());
+        break;
+    case 2:
+        vectorUser.setX(coordPlane.y());
+        vectorUser.setY(coordPlane.x());
+        vectorUser.setZ(-100);
+        point.setX(coordPlane.y());
+        point.setY(coordPlane.x());
+        point.setZ(100);
+        break;
+    default:
+        break;
+    }
+    mainWindow->enableDebugObjects();
+    mainWindow->clearDebugSpheres();
+    mainWindow->clearDebugCylinders();
+    mainWindow->addDebugSphere(vectorUser, sphere, QColor("#ff0000"),50);
+    mainWindow->addDebugCylinder(vectorUser, point,cylinder, QColor("#ff0000"));
+}
+
+void DrawManager::on_pushButton_clicked()
+{
+    polyline.checkIntersect(meshEigen, vectorUser, point, selection);
+    mainWindow->enableDebugObjects();
+    mainWindow->clearDebugSpheres();
+    mainWindow->clearDebugCylinders();
+    mainWindow->addDebugSphere(polyline.minP, sphere, QColor("#ff0000"),50);
+    mainWindow->addDebugSphere(polyline.maxP, sphere, QColor("#ff0000"),50);
+}
+
+void DrawManager::on_sphere_editingFinished()
+{
+    QLineEdit *spherea = new QLineEdit;
+    spherea->setValidator(new QDoubleValidator(-999.0, 999.0, 2, spherea));
+    sphere = ui->sphere->text().toDouble();
+}
+
+
+
+void DrawManager::on_cylinder_editingFinished()
+{
+    QLineEdit *cylindera = new QLineEdit;
+    cylindera->setValidator(new QDoubleValidator(-999.0, 999.0, 2, cylindera));
+    cylinder = ui->cylinder->text().toDouble();
 }

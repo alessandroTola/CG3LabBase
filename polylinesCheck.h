@@ -15,55 +15,75 @@
 #include <CGAL/Plane_3.h>
 #include <CGAL/Filtered_kernel.h>
 
+#include <common/utils.h>
+
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QStatusBar>
 #include <QDebug>
 #include <QFrame>
 
-
 using namespace CGAL;
 
 typedef Exact_predicates_inexact_constructions_kernel             K;
 typedef Simple_cartesian<double>                                  KK;
 typedef Surface_mesh<K::Point_3>                                  Mesh;
-typedef K::Point_3                                                PointC;
-typedef K::Point_2                                                PointD;
+typedef K::Point_3                                                Point3;
+typedef K::Point_2                                                Point2;
 typedef K::Plane_3                                                PlaneC;
 typedef Mesh::Vertex_index                                        vertex_descriptor;
 typedef Mesh::Face_index                                          face_descriptor;
 typedef Mesh::Vertex_range                                        verticesIter;
-typedef Mesh::Property_map<vertex_descriptor, K::Point_3>         MapPoints;
+typedef Mesh::Property_map<vertex_descriptor, Point3>             MapPoints;
 typedef std::vector<std::vector<Pointd>>                          ArrayPoint;
-typedef std::vector<PointD>                                             Array2dPoint;
+typedef std::vector<Point2>                                       Array2dPoint;
+typedef Eigen::Matrix3d                                           Matrix;
+
 class PolylinesCheck
 {
     public:
         PolylinesCheck();
 
-        ArrayPoint poly;
+        ArrayPoint   poly;
 
         Array2dPoint poly2d;
 
-        void minMaxPoints (const Mesh& mesh, int selection);
+        Pointd  minP;
 
-        void setMin(PointC& minP);
+        Pointd  maxP;
 
-        void setMax(PointC& maxP);
+        Pointd  I;
 
-        PointC getMin();
+        void    minMaxPoints            (const Mesh& mesh, int selection);
 
-        PointC getMax();
+        void    setMin                  (Point3& minP);
 
-        void setPoly(const Mesh& mesh, Vec3& norm, double d);
+        void    setMax                  (Point3& maxP);
 
-        void convertTo2dPlane ();
+        Point3  getMin                  ();
+
+        Point3  getMax                  ();
+
+        void    setPoly                 (const Mesh& mesh, Vec3& norm);
+
+        void    convertTo2dPlane        ();
+
+        bool    checkPolyline           ();
+
+        void    setNormal               (Vec3& normal);
+
+        void    setD                    ();
+
+        int     intersect3D_RayTriangle (Pointd p0, Pointd p1, Pointd v0, Pointd v1, Pointd v2);
+
+        void    checkIntersect          (DrawableEigenMesh* meshEigenOrigin, Pointd p0, Pointd p1, int selection);
 
     private:
 
-        PointC min;
-        PointC max;
-        Vec3 normalplane;
+        Point3  min;
+        Point3  max;
+        Vec3    normalplane;
+        double d;
 };
 
 #endif // POLYLINES_H

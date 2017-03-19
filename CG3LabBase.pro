@@ -52,10 +52,12 @@ message(Included modules: $$MODULES)
 SOURCES += \
     main.cpp \
     drawmanager.cpp \
+    polylinesCheck.cpp
 
 FORMS += \
     drawmanager.ui
 
 HEADERS += \
     drawmanager.h \
+    polylinesCheck.h
 
