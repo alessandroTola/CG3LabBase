@@ -183,21 +183,21 @@ int PolylinesCheck::intersect3D_RayTriangle( Pointd p0, Pointd p1, Pointd v0, Po
     //             1 =  intersect in unique point I1
     //             2 =  are in the same plane
 
-    Vec3    e1, e2, e3;                     // triangle vectors
+    Vec3    e1, e2, n;                      // triangle vectors
     Vec3    dir, w0, w;                     // ray vectors
     double     r, a, b;                     // params to calc ray-plane intersect
     //Pointd I;
     // get triangle edge vectors and plane normal
     e1 = v1 - v0;
     e2 = v2 - v0;
-    e3 = e1.cross(e2);                      // cross product
-    if (e3 == (Vec3)0)                      // triangle is degenerate
+    n = e1.cross(e2);                       // cross product
+    if (n == (Vec3)0)                       // triangle is degenerate
         return -1;                          // do not deal with this case
 
     dir = p1 - p0;                          // ray direction vector
     w0 = p0 - v0;
-    a = -e3.dot(w0);
-    b = e3.dot(dir);
+    a = -n.dot(w0);
+    b = n.dot(dir);
     if (fabs(b) < SMALL_NUM) {              // ray is  parallel to triangle plane
         if (a == 0)                         // ray lies in triangle plane
             return 2;
@@ -235,6 +235,37 @@ int PolylinesCheck::intersect3D_RayTriangle( Pointd p0, Pointd p1, Pointd v0, Po
 
 
 
+}
+
+void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin){
+    std::vector<int> checker(meshEigenOrigin->getNumberFaces());
+
+    checker = {0};
+    Vec3 a(0,1,0);
+    for(unsigned int i = 0; i < meshEigenOrigin->getNumberFaces(); i++){
+        Pointi f = meshEigenOrigin->getFace(i);
+        Vec3    e1, e2, e3, n;
+        e1 = meshEigenOrigin->getVertex(f.x());
+        e2 = meshEigenOrigin->getVertex(f.y());
+        e3 = meshEigenOrigin->getVertex(f.z());
+        n = meshEigenOrigin->getFaceNormal(i);
+        if(e1.y() > 0 && e2.y() > 0 && e3.y() >0){
+            qDebug() << a.dot(n);
+            if(a.dot(n) > 0){
+                checker[i] = 1;
+                meshEigenOrigin->setFaceColor(0,255,0,i);
+            }
+        } else {
+            if(e1.y() < 0 && e2.y() < 0 && e3.y() < 0){
+                if(a.dot(n) < 0){
+                    checker[i] = 1;
+                    meshEigenOrigin->setFaceColor(0,255,0,i);
+                }
+            }else {
+                meshEigenOrigin->setFaceColor(255,0,0,i);
+            }
+        }
+    }
 }
 
 

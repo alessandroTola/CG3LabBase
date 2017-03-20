@@ -334,16 +334,6 @@ void DrawManager::on_serchPoint_clicked()
     mainWindow->addDebugCylinder(vectorUser, point,cylinder, QColor("#ff0000"));
 }
 
-void DrawManager::on_pushButton_clicked()
-{
-    polyline.checkIntersect(meshEigen, vectorUser, point, selection);
-    mainWindow->enableDebugObjects();
-    mainWindow->clearDebugSpheres();
-    mainWindow->clearDebugCylinders();
-    mainWindow->addDebugSphere(polyline.minP, sphere, QColor("#ff0000"),50);
-    mainWindow->addDebugSphere(polyline.maxP, sphere, QColor("#ff0000"),50);
-}
-
 void DrawManager::on_sphere_editingFinished()
 {
     QLineEdit *spherea = new QLineEdit;
@@ -351,11 +341,42 @@ void DrawManager::on_sphere_editingFinished()
     sphere = ui->sphere->text().toDouble();
 }
 
-
-
 void DrawManager::on_cylinder_editingFinished()
 {
     QLineEdit *cylindera = new QLineEdit;
     cylindera->setValidator(new QDoubleValidator(-999.0, 999.0, 2, cylindera));
     cylinder = ui->cylinder->text().toDouble();
+}
+
+void DrawManager::on_drawPoint_clicked()
+{
+    polyline.checkIntersect(meshEigen, vectorUser, point, selection);
+    mainWindow->enableDebugObjects();
+    mainWindow->clearDebugSpheres();
+    mainWindow->clearDebugCylinders();
+    mainWindow->addDebugSphere(polyline.minP, sphere, QColor("#ff0000"),50);
+    mainWindow->addDebugSphere(polyline.maxP, sphere, QColor("#ff0000"),50);
+
+}
+
+void DrawManager::on_translate_clicked()
+{
+    meshEigen->translate(Pointd(0,-polyline.minP.y(),0));
+    Pointd minimo(polyline.minP.x(), 0,polyline.minP.z());
+    Pointd massimo(polyline.maxP.x(), 0,polyline.maxP.z());
+    polyline.minP = minimo;
+    polyline.maxP = massimo;
+    mainWindow->clearDebugSpheres();
+    mainWindow->addDebugSphere(polyline.minP, sphere, QColor("#ff0000"),50);
+    mainWindow->addDebugSphere(polyline.maxP, sphere, QColor("#ff0000"),50);
+    mainWindow->updateGeometry();
+
+}
+
+void DrawManager::on_check_clicked()
+{
+    polyline.check(meshEigen);
+    mainWindow->updateGeometry();
+
+
 }

@@ -104,11 +104,15 @@ class DrawManager : public QFrame
 
         void on_serchPoint_clicked();
 
-        void on_pushButton_clicked();
-
         void on_sphere_editingFinished();
 
         void on_cylinder_editingFinished();
+
+        void on_drawPoint_clicked();
+
+        void on_translate_clicked();
+
+        void on_check_clicked();
 
 private:
 

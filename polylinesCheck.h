@@ -52,8 +52,6 @@ class PolylinesCheck
 
         Pointd  maxP;
 
-        Pointd  I;
-
         void    minMaxPoints            (const Mesh& mesh, int selection);
 
         void    setMin                  (Point3& minP);
@@ -78,12 +76,15 @@ class PolylinesCheck
 
         void    checkIntersect          (DrawableEigenMesh* meshEigenOrigin, Pointd p0, Pointd p1, int selection);
 
+        void    check                   (DrawableEigenMesh *meshEigenOrigin);
     private:
 
+        DrawableEigenMesh meshPoly;
         Point3  min;
         Point3  max;
+        Pointd  I;
         Vec3    normalplane;
-        double d;
+        double  d;
 };
 
 #endif // POLYLINES_H
