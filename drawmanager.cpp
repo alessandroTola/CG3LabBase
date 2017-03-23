@@ -81,6 +81,10 @@ void DrawManager::on_nPlane_editingFinished(){
     QLineEdit *nPlane = new QLineEdit;
     nPlane->setValidator(new QIntValidator(0, 360,nPlane));
     nPlaneUser = ui->nPlane->text().toInt();
+    stepAngle = 180 / nPlaneUser;
+    nextAngle = -stepAngle;
+    stepColor = 120 / nPlaneUser;
+    nextColor = - stepColor;
 }
 
 void DrawManager::on_loadMesh_clicked()
@@ -228,7 +232,7 @@ void DrawManager::on_zAxis_toggled(bool checked)
 
 void DrawManager::on_rotationAxis_clicked()
 {
-    polyline.minMaxPoints(mesh, selection);
+    /*polyline.minMaxPoints(mesh, selection);
 
     mainWindow->enableDebugObjects();
     mainWindow->clearDebugSpheres();
@@ -258,7 +262,7 @@ void DrawManager::on_rotationAxis_clicked()
     qDebug() << polyline.poly2d[0].x();
     for(unsigned int i = 0; i <polyline.poly2d.size(); i++) {
         mainWindow->addDebugSphere(Pointd(polyline.poly2d[i].x(),polyline.poly2d[i].y(),0) , 0.01, QColor("#ff0000"),50);
-    }
+    }*/
 }
 
 void DrawManager::on_clearMesh_clicked()
@@ -279,6 +283,7 @@ void DrawManager::on_clearMesh_clicked()
     mainWindow->clearDebugCylinders();
     mainWindow->clearDebugSpheres();
     delete meshEigen;
+    polyline.getChecker().clear();
     meshEigen = nullptr;
 
 }
@@ -361,22 +366,62 @@ void DrawManager::on_drawPoint_clicked()
 
 void DrawManager::on_translate_clicked()
 {
-    meshEigen->translate(Pointd(0,-polyline.minP.y(),0));
-    Pointd minimo(polyline.minP.x(), 0,polyline.minP.z());
-    Pointd massimo(polyline.maxP.x(), 0,polyline.maxP.z());
-    polyline.minP = minimo;
-    polyline.maxP = massimo;
+    //Pointd centro = -meshEigen->getBarycenter();
+    Pointd centro(-((polyline.getMax()-polyline.getMin())/2+polyline.getMin()));
+    meshEigen->translate(centro);
+    Matrix3d rotation;
+    Vec3 y(1,0,0);
+    Vec3 z(0,0,1);
+    Vec3 x(1,0,0);
+    if(selection == 1){
+        Common::getRotationMatrix(z, acos(0), rotation);
+        meshEigen->rotate(rotation,Vector3d(0,0,0));
+        Common::getRotationMatrix(x, acos(0), rotation);
+        meshEigen->rotate(rotation,Vector3d(0,0,0));
+    }
+    if(selection == 2){
+        Common::getRotationMatrix(y, -acos(0), rotation);
+        meshEigen->rotate(rotation,Vector3d(0,0,0));
+    }
+    polyline.minP.operator +=(centro);
+    polyline.maxP.operator +=(centro);
+    polyline.rotatePoint(rotation,Pointd(0,0,0));
     mainWindow->clearDebugSpheres();
-    mainWindow->addDebugSphere(polyline.minP, sphere, QColor("#ff0000"),50);
-    mainWindow->addDebugSphere(polyline.maxP, sphere, QColor("#ff0000"),50);
+    mainWindow->addDebugSphere(polyline.getMax(), sphere, QColor("#ff0000"),50);
+    mainWindow->addDebugSphere(polyline.getMin(), sphere, QColor("#ff0000"),50);
     mainWindow->updateGeometry();
-
 }
 
 void DrawManager::on_check_clicked()
 {
-    polyline.check(meshEigen);
-    mainWindow->updateGeometry();
-
-
+    const double halfC = M_PI / 180;
+    double angle = 180 / nPlaneUser;
+    int angleC = 120 / nPlaneUser;
+    int angleCStart = 0;
+    Matrix3d rotation;
+    Vec3 axis(1,0,0);
+    polyline.setCheckerDimension(meshEigen->getNumberFaces());
+    polyline.check(meshEigen,angleCStart);
+    for(int i = 0; i < nPlaneUser; i++){
+        angleCStart+=angleC;
+        Common::getRotationMatrix(axis, (angle * halfC), rotation);
+        meshEigen->rotate(rotation,Vector3d(0,0,0));
+        meshEigen->updateBoundingBox();
+        polyline.check(meshEigen,angleCStart);
+        mainWindow->updateGlCanvas();
+    }
 }
+
+void DrawManager::on_stepByStep_clicked()
+{
+    Vec3 axis(1,0,0);
+    const double halfC = M_PI / 180;
+    polyline.setCheckerDimension(meshEigen->getNumberFaces());
+    nextColor += stepColor;
+    Matrix3d rotation = getRotationMatrix(axis, (stepAngle * halfC));
+    meshEigen->rotate(rotation,Vector3d(0,0,0));
+    meshEigen->updateBoundingBox();
+    polyline.check(meshEigen,nextColor);
+    mainWindow->updateGlCanvas();
+}
+
