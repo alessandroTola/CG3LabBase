@@ -54,13 +54,13 @@ class PolylinesCheck
 
         void    minMaxPoints            (const Mesh& mesh, int selection);
 
-        void    setMin                  (Point3& minP);
+        void    setMin                  (Pointd& minP1);
 
-        void    setMax                  (Point3& maxP);
+        void    setMax                  (Pointd& maxP1);
 
-        Point3  getMin                  ();
+        Pointd  getMin                  ();
 
-        Point3  getMax                  ();
+        Pointd  getMax                  ();
 
         void    setPoly                 (const Mesh& mesh, Vec3& norm);
 
@@ -76,7 +76,17 @@ class PolylinesCheck
 
         void    checkIntersect          (DrawableEigenMesh* meshEigenOrigin, Pointd p0, Pointd p1, int selection);
 
-        void    check                   (DrawableEigenMesh *meshEigenOrigin);
+        void    rotatePoint             (Eigen::Matrix3d rotation, Pointd p);
+
+        void    check                   (DrawableEigenMesh *meshEigenOrigin, double color);
+
+        int     serchMinY               (std::vector<int> lista, DrawableEigenMesh *meshEigenOrigin);
+
+        int     serchMaxY               (std::vector<int> lista, DrawableEigenMesh *meshEigenOrigin);
+
+        void    setCheckerDimension     (int dimension);
+
+        std::vector<int>    getChecker  ();
     private:
 
         DrawableEigenMesh meshPoly;
@@ -84,6 +94,7 @@ class PolylinesCheck
         Point3  max;
         Pointd  I;
         Vec3    normalplane;
+        std::vector<int> checker;
         double  d;
 };
 

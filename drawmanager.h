@@ -37,6 +37,7 @@
 class QLineEdit;
 using namespace Eigen;
 using namespace CGAL;
+using namespace Common;
 
 namespace Ui {
     class DrawManager;
@@ -114,6 +115,8 @@ class DrawManager : public QFrame
 
         void on_check_clicked();
 
+        void on_stepByStep_clicked();
+
 private:
 
         Ui::DrawManager *ui;
@@ -123,6 +126,10 @@ private:
         Vec2 coordPlane;
         int nPlaneUser;
         int selection;
+        double stepAngle;
+        double nextAngle;
+        double stepColor;
+        double nextColor;
         DrawableEigenMesh* meshEigen;
         Mesh mesh;
         PolylinesCheck polyline;

@@ -1,6 +1,6 @@
 #include "polylinesCheck.h"
 
-#define SMALL_NUM   0.00000001 // anything that avoids division overflow
+#define SMALL_NUM   0.0000000001 // anything that avoids division overflow
 
 PolylinesCheck::PolylinesCheck(){
 }
@@ -52,20 +52,20 @@ void PolylinesCheck::minMaxPoints (const Mesh &mesh, int selection){
     }
 }
 
-void PolylinesCheck::setMin(Point3& minP){
-    min = minP;
+void PolylinesCheck::setMin(Pointd& minP1){
+    minP = minP1;
 }
 
-void PolylinesCheck::setMax(Point3& maxP){
-    max = maxP;
+void PolylinesCheck::setMax(Pointd& maxP1){
+    maxP = maxP1;
 }
 
-Point3 PolylinesCheck::getMin(){
-    return min;
+Pointd PolylinesCheck::getMin(){
+    return minP;
 }
 
-Point3 PolylinesCheck::getMax(){
-    return max;
+Pointd PolylinesCheck::getMax(){
+    return maxP;
 }
 
 void PolylinesCheck::setPoly(const Mesh& mesh, Vec3& norm){
@@ -237,35 +237,112 @@ int PolylinesCheck::intersect3D_RayTriangle( Pointd p0, Pointd p1, Pointd v0, Po
 
 }
 
-void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin){
-    std::vector<int> checker(meshEigenOrigin->getNumberFaces());
+void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin, double color){
+    meshPoly = *meshEigenOrigin;
 
-    checker = {0};
+    CGALInterface::AABBTree eigenTree(*meshEigenOrigin);
+    std::vector<int> blackList;
+    Vec3 e1, e2, e3, n;
     Vec3 a(0,1,0);
+    Pointi f;
+    int face;
+    double max = meshEigenOrigin->getBoundingBox().maxY() + 100 ;
+    double min = meshEigenOrigin->getBoundingBox().minY() - 100 ;
+    QColor c;
+
     for(unsigned int i = 0; i < meshEigenOrigin->getNumberFaces(); i++){
-        Pointi f = meshEigenOrigin->getFace(i);
-        Vec3    e1, e2, e3, n;
-        e1 = meshEigenOrigin->getVertex(f.x());
-        e2 = meshEigenOrigin->getVertex(f.y());
-        e3 = meshEigenOrigin->getVertex(f.z());
-        n = meshEigenOrigin->getFaceNormal(i);
-        if(e1.y() > 0 && e2.y() > 0 && e3.y() >0){
-            qDebug() << a.dot(n);
-            if(a.dot(n) > 0){
-                checker[i] = 1;
-                meshEigenOrigin->setFaceColor(0,255,0,i);
+        if(checker[i] != 1){
+            f = meshEigenOrigin->getFace(i);
+            e1 = meshEigenOrigin->getVertex(f.x());
+            e2 = meshEigenOrigin->getVertex(f.y());
+            e3 = meshEigenOrigin->getVertex(f.z());
+            n = meshEigenOrigin->getFaceNormal(i);
+            Pointd bar((e1+e2+e3)/3);
+            if(bar.y() > 0){
+                eigenTree.getIntersectEigenFaces(Pointd(bar.x(), max, bar.z()), Pointd(bar.x(), 0, bar.z()), blackList);
+                if(blackList.size() > 0){
+                    face = serchMaxY(blackList,meshEigenOrigin);
+                    checker[face] = 1;
+                    c.setHsv(color, 255,255);
+                    meshEigenOrigin->setFaceColor(c.red(), c.green(),c.blue(),face);
+                    blackList.clear();
+                    continue;
+                } else {
+                    if(n.dot(a) <= 0){
+                        c.setHsv(color, 255,255);
+                        meshEigenOrigin->setFaceColor(c.red(), c.green(),c.blue(),i);
+                        checker[i] = 1;
+                    } else {
+                        if(n.dot(a) >= 0){
+                            c.setHsv(120+color, 255,255);
+                            meshEigenOrigin->setFaceColor(c.red(), c.green(),c.blue(),i);
+                            checker[i] = 1;
+                        }
+                    }
+                }qDebug()<< bar.y() << "dio cane2";
             }
-        } else {
-            if(e1.y() < 0 && e2.y() < 0 && e3.y() < 0){
-                if(a.dot(n) < 0){
-                    checker[i] = 1;
-                    meshEigenOrigin->setFaceColor(0,255,0,i);
-                }
-            }else {
-                meshEigenOrigin->setFaceColor(255,0,0,i);
+            if(bar.y() < 0){
+                eigenTree.getIntersectEigenFaces(Pointd(bar.x(), 0, bar.z()), Pointd(bar.x(), min, bar.z()), blackList);
+                if(blackList.size() > 0){
+                    face = serchMinY(blackList,meshEigenOrigin);
+                    checker[face] = 1;
+                    c.setHsv(120+color, 255,255);
+                    meshEigenOrigin->setFaceColor(c.red(), c.green(),c.blue(),face);
+                    blackList.clear();
+                    continue;
+                } else {
+                    if(n.dot(a) <= 0){
+                        c.setHsv(color, 255,255);
+                        meshEigenOrigin->setFaceColor(c.red(), c.green(),c.blue(),i);
+                        checker[i] = 1;
+                    } else {
+                        if(n.dot(a) >= 0){
+                            c.setHsv(120+color, 255,255);
+                            meshEigenOrigin->setFaceColor(c.red(), c.green(),c.blue(),i);
+                            checker[i] = 1;
+                        }
+                    }
+                }qDebug()<< bar.y() << "dio cane1";
             }
+            if(bar.y()==0)qDebug()<< bar.y() << "dio cane3";
+            blackList.clear();
         }
     }
 }
+
+void PolylinesCheck::rotatePoint(Eigen::Matrix3d rotation, Pointd p){
+    minP.rotate(rotation, p);
+    maxP.rotate(rotation, p);
+}
+
+int PolylinesCheck::serchMaxY (std::vector<int> lista, DrawableEigenMesh *meshEigenOrigin){
+    int max = lista.front();
+        for(int i : lista){
+            if(meshEigenOrigin->getVertex(meshEigenOrigin->getFace(i).y()).y() > meshEigenOrigin->getVertex(meshEigenOrigin->getFace(max).y()).y()){
+                max = i;
+            }
+        }
+    return max;
+}
+
+int PolylinesCheck::serchMinY (std::vector<int> lista, DrawableEigenMesh *meshEigenOrigin){
+        int min = lista.front();
+        for(int i : lista){
+            if(meshEigenOrigin->getVertex(meshEigenOrigin->getFace(i).y()).y() < meshEigenOrigin->getVertex(meshEigenOrigin->getFace(min).y()).y()){
+                min = i;
+            }
+        }
+    return min;
+}
+
+void PolylinesCheck::setCheckerDimension (int dimension){
+    checker.resize(dimension);
+}
+
+std::vector<int>    PolylinesCheck::getChecker  (){
+    return checker;
+}
+
+
 
 
