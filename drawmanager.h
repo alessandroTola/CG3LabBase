@@ -63,7 +63,7 @@ class DrawManager : public QFrame
 
     private slots:
 
-        void on_x_editingFinished();
+        void on_x_editingFinished               ();
 
         void on_y_editingFinished               ();
 
@@ -99,41 +99,48 @@ class DrawManager : public QFrame
 
         void on_clearMesh_clicked               ();
 
-        void on_xCoord_editingFinished();
+        void on_xCoord_editingFinished          ();
 
-        void on_yCoord_editingFinished();
+        void on_yCoord_editingFinished          ();
 
-        void on_serchPoint_clicked();
+        void on_serchPoint_clicked              ();
 
-        void on_sphere_editingFinished();
+        void on_sphere_editingFinished          ();
 
-        void on_cylinder_editingFinished();
+        void on_cylinder_editingFinished        ();
 
-        void on_drawPoint_clicked();
+        void on_drawPoint_clicked               ();
 
-        void on_translate_clicked();
+        void on_translate_clicked               ();
 
-        void on_check_clicked();
+        void on_check_clicked                   ();
 
-        void on_stepByStep_clicked();
+        void on_stepByStep_clicked              ();
+
+        void on_meshToOrigin_clicked            ();
+
+        void on_saveMesh_clicked                ();
 
 private:
 
-        Ui::DrawManager *ui;
-        MainWindow* mainWindow;
-        Pointd vectorUser;
-        Pointd point;
-        Vec2 coordPlane;
-        int nPlaneUser;
-        int selection;
-        double stepAngle;
-        double nextAngle;
-        double stepColor;
-        double nextColor;
-        DrawableEigenMesh* meshEigen;
-        Mesh mesh;
-        PolylinesCheck polyline;
-        double cylinder, sphere;
+        DrawableEigenMesh*  meshEigen;
+        PolylinesCheck      polyline;
+        Ui::DrawManager*    ui;
+        MainWindow*         mainWindow;
+        QString             filename;
+        Pointd              vectorUser;
+        Pointd              point;
+        Pointd              meshBerycenter;
+        Mesh                mesh;
+        Vec2                coordPlane;
+        int                 nPlaneUser;
+        int                 selection;
+        int                 increse;
+        double              stepAngle;
+        int              stepColor;
+        int              nextColor;
+        double              cylinder, sphere;
+
 
 };
 

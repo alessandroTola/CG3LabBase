@@ -24,20 +24,26 @@ void DrawManager::setButtonMeshLoaded(bool b){
     ui->xAxis->setEnabled(b);
     ui->yAxis->setEnabled(b);
     ui->zAxis->setEnabled(b);
-    ui->eigenToCgal->setEnabled(b);
     ui->nPlaneLabel->setEnabled(b);
     ui->nPlane->setEnabled(b);
-    ui->writeCoordinate->setEnabled(b);
+    //ui->writeCoordinate->setEnabled(b);
     ui->showAxis->setEnabled(b);
     ui->clearMesh->setEnabled(b);
     ui->loadMesh->setEnabled(false);
-    ui->rotationAxis->setEnabled(b);
     ui->xLabel->setEnabled(b);
     ui->yLabel->setEnabled(b);
     ui->xCoord->setEnabled(b);
     ui->yCoord->setEnabled(b);
     ui->serchPoint->setEnabled(b);
     ui->selectLabel->setEnabled(b);
+    ui->cylinder->setEnabled(b);
+    ui->Cylinder->setEnabled(b);
+    ui->sphere->setEnabled(b);
+    ui->Sphere->setEnabled(b);
+    ui->saveMesh->setEnabled(b);
+    ui->check->setEnabled(b);
+    ui->stepByStep->setEnabled(b);
+    ui->meshToOrigin->setEnabled(b);
 
 }
 
@@ -82,9 +88,9 @@ void DrawManager::on_nPlane_editingFinished(){
     nPlane->setValidator(new QIntValidator(0, 360,nPlane));
     nPlaneUser = ui->nPlane->text().toInt();
     stepAngle = 180 / nPlaneUser;
-    nextAngle = -stepAngle;
     stepColor = 120 / nPlaneUser;
     nextColor = - stepColor;
+    polyline.setCheckerDimension(meshEigen->getNumberFaces());
 }
 
 void DrawManager::on_loadMesh_clicked()
@@ -102,6 +108,7 @@ void DrawManager::on_loadMesh_clicked()
     }
     sphere = 0.01;
     cylinder = 0.01;
+    increse = 0;
 }
 
 void DrawManager::on_eigenToCgal_clicked()
@@ -110,7 +117,7 @@ void DrawManager::on_eigenToCgal_clicked()
 }
 
 void DrawManager::convertEigenMesh (DrawableEigenMesh *meshEigenOrigin){
-
+    //Il tasto è stato rimosso
     int nVertex = meshEigenOrigin->getNumberVertices();
     int nFaces = meshEigenOrigin->getNumberFaces();
 
@@ -139,6 +146,7 @@ void DrawManager::on_clearAxis_clicked()
 
 void DrawManager::on_saveMeshCgal_clicked()
 {
+    //Tasto rimosso dal manager
     QFileDialog filedialog(mainWindow, tr("Export surface to file"));
     filedialog.setFileMode(QFileDialog::AnyFile);
 
@@ -232,6 +240,7 @@ void DrawManager::on_zAxis_toggled(bool checked)
 
 void DrawManager::on_rotationAxis_clicked()
 {
+    //Funzione momentaneamente rimossa, cambio piano di attacco alla mesh
     /*polyline.minMaxPoints(mesh, selection);
 
     mainWindow->enableDebugObjects();
@@ -271,13 +280,11 @@ void DrawManager::on_clearMesh_clicked()
     ui->xAxis->setEnabled(false);
     ui->yAxis->setEnabled(false);
     ui->zAxis->setEnabled(false);
-    ui->eigenToCgal->setEnabled(false);
     ui->nPlaneLabel->setEnabled(false);
     ui->nPlane->setEnabled(false);
     ui->writeCoordinate->setEnabled(false);
     ui->showAxis->setEnabled(false);
     ui->clearMesh->setEnabled(false);
-    ui->rotationAxis->setEnabled(false);
     ui->loadMesh->setEnabled(true);
     mainWindow->deleteObj(meshEigen);
     mainWindow->clearDebugCylinders();
@@ -395,7 +402,6 @@ void DrawManager::on_translate_clicked()
 void DrawManager::on_check_clicked()
 {
     const double halfC = M_PI / 180;
-    double angle = 180 / nPlaneUser;
     int angleC = 120 / nPlaneUser;
     int angleCStart = 0;
     Matrix3d rotation;
@@ -404,7 +410,7 @@ void DrawManager::on_check_clicked()
     polyline.check(meshEigen,angleCStart);
     for(int i = 0; i < nPlaneUser; i++){
         angleCStart+=angleC;
-        Common::getRotationMatrix(axis, (angle * halfC), rotation);
+        Common::getRotationMatrix(axis, (stepAngle * halfC), rotation);
         meshEigen->rotate(rotation,Vector3d(0,0,0));
         meshEigen->updateBoundingBox();
         polyline.check(meshEigen,angleCStart);
@@ -414,14 +420,49 @@ void DrawManager::on_check_clicked()
 
 void DrawManager::on_stepByStep_clicked()
 {
-    Vec3 axis(1,0,0);
+    if(filename == ""){
+        on_saveMesh_clicked();
+    }
+
     const double halfC = M_PI / 180;
-    polyline.setCheckerDimension(meshEigen->getNumberFaces());
+    Vec3 axis(1,0,0);
     nextColor += stepColor;
-    Matrix3d rotation = getRotationMatrix(axis, (stepAngle * halfC));
+
+    Matrix3d rotation = getRotationMatrix(axis, (stepAngle * halfC * increse));
     meshEigen->rotate(rotation,Vector3d(0,0,0));
     meshEigen->updateBoundingBox();
     polyline.check(meshEigen,nextColor);
     mainWindow->updateGlCanvas();
+    rotation = getRotationMatrix(axis, -(stepAngle * halfC * increse));
+    meshEigen->rotate(rotation,Vector3d(0,0,0));
+    meshEigen->saveOnObj(filename.replace(filename.size()-4,QString::number(increse).toUtf8().constData()).toUtf8().constData());
+    if(increse == nPlaneUser)
+        ui->stepByStep->setEnabled(false);
+    increse++;
 }
 
+
+void DrawManager::on_meshToOrigin_clicked()
+{
+    meshBerycenter = meshEigen->getBarycenter();
+    meshEigen->translate(-meshBerycenter);
+    mainWindow->updateGlCanvas();
+}
+
+void DrawManager::on_saveMesh_clicked()
+{
+    QFileDialog filedialog(mainWindow, tr("Export surface to file"));
+    filedialog.setFileMode(QFileDialog::AnyFile);
+
+    filedialog.setNameFilter(tr("OBJ files (*.obj);;"
+                                  "All files (*)"));
+
+    filedialog.setAcceptMode(QFileDialog::AcceptSave);
+    filedialog.setDefaultSuffix("obj");
+    if(filedialog.exec()){
+        filename = filedialog.selectedFiles().front();
+        std::cerr << "Saving to file \"" << filename.toLocal8Bit().data() << "\"...";
+        meshEigen->saveOnObj(filename.toUtf8().constData());
+    }
+
+}

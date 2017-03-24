@@ -78,7 +78,7 @@ class PolylinesCheck
 
         void    rotatePoint             (Eigen::Matrix3d rotation, Pointd p);
 
-        void    check                   (DrawableEigenMesh *meshEigenOrigin, double color);
+        void    check                   (DrawableEigenMesh *meshEigenOrigin, int color);
 
         int     serchMinY               (std::vector<int> lista, DrawableEigenMesh *meshEigenOrigin);
 

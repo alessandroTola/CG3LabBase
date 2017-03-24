@@ -237,7 +237,7 @@ int PolylinesCheck::intersect3D_RayTriangle( Pointd p0, Pointd p1, Pointd v0, Po
 
 }
 
-void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin, double color){
+void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin, int color){
     meshPoly = *meshEigenOrigin;
 
     CGALInterface::AABBTree eigenTree(*meshEigenOrigin);
@@ -264,18 +264,18 @@ void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin, double color){
                     face = serchMaxY(blackList,meshEigenOrigin);
                     checker[face] = 1;
                     c.setHsv(color, 255,255);
-                    meshEigenOrigin->setFaceColor(c.red(), c.green(),c.blue(),face);
+                    meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),face);
                     blackList.clear();
                     continue;
                 } else {
                     if(n.dot(a) <= 0){
                         c.setHsv(color, 255,255);
-                        meshEigenOrigin->setFaceColor(c.red(), c.green(),c.blue(),i);
+                        meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),i);
                         checker[i] = 1;
                     } else {
                         if(n.dot(a) >= 0){
                             c.setHsv(120+color, 255,255);
-                            meshEigenOrigin->setFaceColor(c.red(), c.green(),c.blue(),i);
+                            meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),i);
                             checker[i] = 1;
                         }
                     }
@@ -287,18 +287,18 @@ void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin, double color){
                     face = serchMinY(blackList,meshEigenOrigin);
                     checker[face] = 1;
                     c.setHsv(120+color, 255,255);
-                    meshEigenOrigin->setFaceColor(c.red(), c.green(),c.blue(),face);
+                    meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),face);
                     blackList.clear();
                     continue;
                 } else {
                     if(n.dot(a) <= 0){
                         c.setHsv(color, 255,255);
-                        meshEigenOrigin->setFaceColor(c.red(), c.green(),c.blue(),i);
+                        meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),i);
                         checker[i] = 1;
                     } else {
                         if(n.dot(a) >= 0){
                             c.setHsv(120+color, 255,255);
-                            meshEigenOrigin->setFaceColor(c.red(), c.green(),c.blue(),i);
+                            meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),i);
                             checker[i] = 1;
                         }
                     }
