@@ -339,6 +339,11 @@ void PolylinesCheck::setCheckerDimension (int dimension){
     checker.resize(dimension);
 }
 
+void PolylinesCheck::resetChecker()
+{
+    checker.clear();
+}
+
 std::vector<int>    PolylinesCheck::getChecker  (){
     return checker;
 }

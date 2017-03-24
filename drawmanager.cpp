@@ -109,6 +109,11 @@ void DrawManager::on_loadMesh_clicked()
     sphere = 0.01;
     cylinder = 0.01;
     increse = 0;
+    QColor c;
+    c.setHsv(100,0,255);
+    for(unsigned int i = 0 ; i < meshEigen->getNumberFaces(); i++){
+        meshEigen->setFaceColor(c.redF(), c.greenF(), c.blueF(), i);
+    }
 }
 
 void DrawManager::on_eigenToCgal_clicked()
@@ -427,15 +432,24 @@ void DrawManager::on_stepByStep_clicked()
     const double halfC = M_PI / 180;
     Vec3 axis(1,0,0);
     nextColor += stepColor;
-
+    QColor c;
+    c.setHsv(100,0,255);
     Matrix3d rotation = getRotationMatrix(axis, (stepAngle * halfC * increse));
     meshEigen->rotate(rotation,Vector3d(0,0,0));
     meshEigen->updateBoundingBox();
+    polyline.resetChecker();
+    polyline.setCheckerDimension(meshEigen->getNumberFaces());
     polyline.check(meshEigen,nextColor);
     mainWindow->updateGlCanvas();
+
     rotation = getRotationMatrix(axis, -(stepAngle * halfC * increse));
     meshEigen->rotate(rotation,Vector3d(0,0,0));
-    meshEigen->saveOnObj(filename.replace(filename.size()-4,QString::number(increse).toUtf8().constData()).toUtf8().constData());
+    filename.truncate(filename.size()-5);
+    QString format = ".obj";
+    meshEigen->saveOnObj((filename += QString::number(increse)+=format).toUtf8().constData());
+    for(unsigned int i = 0 ; i < meshEigen->getNumberFaces(); i++){
+        meshEigen->setFaceColor(c.redF(), c.greenF(), c.blueF(), i);
+    }
     if(increse == nPlaneUser)
         ui->stepByStep->setEnabled(false);
     increse++;

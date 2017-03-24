@@ -86,6 +86,8 @@ class PolylinesCheck
 
         void    setCheckerDimension     (int dimension);
 
+        void    resetChecker            ();
+
         std::vector<int>    getChecker  ();
     private:
 

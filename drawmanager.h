@@ -136,9 +136,9 @@ private:
         int                 nPlaneUser;
         int                 selection;
         int                 increse;
+        int                 stepColor;
+        int                 nextColor;
         double              stepAngle;
-        int              stepColor;
-        int              nextColor;
         double              cylinder, sphere;
 
 
