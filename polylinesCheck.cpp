@@ -237,7 +237,7 @@ int PolylinesCheck::intersect3D_RayTriangle( Pointd p0, Pointd p1, Pointd v0, Po
 
 }
 
-void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin, int color){
+void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin, int color, int indexPlane){
     meshPoly = *meshEigenOrigin;
 
     CGALInterface::AABBTree eigenTree(*meshEigenOrigin);
@@ -370,6 +370,7 @@ MatrixI PolylinesCheck::getChecker()
 {
     return checker;
 }
+
 
 
 

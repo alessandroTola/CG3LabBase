@@ -77,7 +77,7 @@ class PolylinesCheck
 
         void    rotatePoint             (Eigen::Matrix3d rotation, Pointd p);
 
-        void    check                   (DrawableEigenMesh *meshEigenOrigin, int color);
+        void    check                   (DrawableEigenMesh *meshEigenOrigin, int color, int indexPlane);
 
         int     serchMinY               (std::vector<int> lista, DrawableEigenMesh *meshEigenOrigin);
 
@@ -87,25 +87,13 @@ class PolylinesCheck
 
         void    resetChecker            ();
 
-/*<<<<<<< Updated upstream
-        std::vector<int>    getChecker  ();
-    private:
-
-        DrawableEigenMesh meshPoly;
-        Point3  min;
-        Point3  max;
-        Pointd  I;
-        Vec3    normalplane;
-        std::vector<int> checker;
-        double  d;
-=======*/
-        MatrixI   getChecker              ();
+        MatrixI   getChecker            ();
 
     private:
 
         DrawableEigenMesh   meshPoly;
-        //Array2dPoint        poly2d;
-        //ArrayPoint          poly;
+        Array2dPoint        poly2d;
+        ArrayPoint          poly;
         Point3              min;
         Point3              max;
         Pointd              minP;
@@ -114,7 +102,6 @@ class PolylinesCheck
         MatrixI             checker;
         Vec3                normalplane;
         double              d;
-        int                 indexPlane=0;
 //>>>>>>> Stashed changes
 };
 

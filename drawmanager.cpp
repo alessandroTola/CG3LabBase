@@ -404,21 +404,16 @@ void DrawManager::on_translate_clicked()
 void DrawManager::on_check_clicked()
 {
     const double halfC = M_PI / 180;
-    int angleC = 120 / nPlaneUser;
-    int angleCStart = 0;
+    int angleCStart = 120;
     Matrix3d rotation;
     Vec3 axis(1,0,0);
-    polyline.check(meshEigen,angleCStart);
-    //polyline.check(meshEigen,angleColor);
-
-    //mainWindow->updateGlCanvas();
+    polyline.check(meshEigen,angleCStart,0);
 
     for(int i = 0; i < nPlaneUser; i++){
-        angleCStart+=angleC;
         Common::getRotationMatrix(axis, (stepAngle * halfC), rotation);
         meshEigen->rotate(rotation,Vector3d(0,0,0));
         meshEigen->updateBoundingBox();
-        polyline.check(meshEigen,angleCStart);
+        polyline.check(meshEigen,angleCStart,0);
         mainWindow->updateGlCanvas();
         //polyline.check(meshEigen,angleColor);
     }
@@ -441,7 +436,7 @@ void DrawManager::on_stepByStep_clicked()
     meshEigen->updateBoundingBox();
     polyline.resetChecker();
     polyline.setCheckerDimension(nPlaneUser,meshEigen->getNumberFaces());
-    polyline.check(meshEigen,nextColor);
+    polyline.check(meshEigen,nextColor,0);
     mainWindow->updateGlCanvas();
 
     rotation = getRotationMatrix(axis, -(stepAngle * halfC * increse));
@@ -461,7 +456,7 @@ void DrawManager::on_stepByStep_clicked()
         meshEigen->rotate(rotation,Vector3d(0,0,0));
         meshEigen->updateBoundingBox();
 
-        polyline.check(meshEigen,nextColor);
+        polyline.check(meshEigen,nextColor,i+1);
         mainWindow->updateGlCanvas();
 
         rotation = getRotationMatrix(axis, -(stepAngle * halfC * increse));
