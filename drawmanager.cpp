@@ -4,8 +4,6 @@
 #include <QtGui>
 #include <string>
 
-
-
 DrawManager::DrawManager(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::DrawManager),
@@ -89,8 +87,7 @@ void DrawManager::on_nPlane_editingFinished(){
     nPlaneUser = ui->nPlane->text().toInt();
     stepAngle = 180 / nPlaneUser;
     stepColor = 120 / nPlaneUser;
-    nextColor = - stepColor;
-    polyline.setCheckerDimension(meshEigen->getNumberFaces());
+    polyline.setCheckerDimension(nPlaneUser,meshEigen->getNumberFaces());
 }
 
 void DrawManager::on_loadMesh_clicked()
@@ -106,11 +103,12 @@ void DrawManager::on_loadMesh_clicked()
         setButtonMeshLoaded(true);
         mainWindow->updateGlCanvas();
     }
-    sphere = 0.01;
+    nextColor = 0;
     cylinder = 0.01;
     increse = 0;
     QColor c;
     c.setHsv(100,0,255);
+
     for(unsigned int i = 0 ; i < meshEigen->getNumberFaces(); i++){
         meshEigen->setFaceColor(c.redF(), c.greenF(), c.blueF(), i);
     }
@@ -273,7 +271,6 @@ void DrawManager::on_rotationAxis_clicked()
         }
     }
     polyline.checkPolyline();
-    qDebug() << polyline.poly2d[0].x();
     for(unsigned int i = 0; i <polyline.poly2d.size(); i++) {
         mainWindow->addDebugSphere(Pointd(polyline.poly2d[i].x(),polyline.poly2d[i].y(),0) , 0.01, QColor("#ff0000"),50);
     }*/
@@ -371,8 +368,8 @@ void DrawManager::on_drawPoint_clicked()
     mainWindow->enableDebugObjects();
     mainWindow->clearDebugSpheres();
     mainWindow->clearDebugCylinders();
-    mainWindow->addDebugSphere(polyline.minP, sphere, QColor("#ff0000"),50);
-    mainWindow->addDebugSphere(polyline.maxP, sphere, QColor("#ff0000"),50);
+    mainWindow->addDebugSphere(polyline.getMin(), sphere, QColor("#ff0000"),50);
+    mainWindow->addDebugSphere(polyline.getMax(), sphere, QColor("#ff0000"),50);
 
 }
 
@@ -395,8 +392,8 @@ void DrawManager::on_translate_clicked()
         Common::getRotationMatrix(y, -acos(0), rotation);
         meshEigen->rotate(rotation,Vector3d(0,0,0));
     }
-    polyline.minP.operator +=(centro);
-    polyline.maxP.operator +=(centro);
+    polyline.getMin().operator +=(centro);
+    polyline.getMax().operator +=(centro);
     polyline.rotatePoint(rotation,Pointd(0,0,0));
     mainWindow->clearDebugSpheres();
     mainWindow->addDebugSphere(polyline.getMax(), sphere, QColor("#ff0000"),50);
@@ -411,8 +408,11 @@ void DrawManager::on_check_clicked()
     int angleCStart = 0;
     Matrix3d rotation;
     Vec3 axis(1,0,0);
-    polyline.setCheckerDimension(meshEigen->getNumberFaces());
     polyline.check(meshEigen,angleCStart);
+    //polyline.check(meshEigen,angleColor);
+
+    //mainWindow->updateGlCanvas();
+
     for(int i = 0; i < nPlaneUser; i++){
         angleCStart+=angleC;
         Common::getRotationMatrix(axis, (stepAngle * halfC), rotation);
@@ -420,7 +420,10 @@ void DrawManager::on_check_clicked()
         meshEigen->updateBoundingBox();
         polyline.check(meshEigen,angleCStart);
         mainWindow->updateGlCanvas();
+        //polyline.check(meshEigen,angleColor);
     }
+    //meshEigen->updateBoundingBox();
+    //mainWindow->updateGlCanvas();
 }
 
 void DrawManager::on_stepByStep_clicked()
@@ -431,28 +434,51 @@ void DrawManager::on_stepByStep_clicked()
 
     const double halfC = M_PI / 180;
     Vec3 axis(1,0,0);
-    nextColor += stepColor;
     QColor c;
     c.setHsv(100,0,255);
     Matrix3d rotation = getRotationMatrix(axis, (stepAngle * halfC * increse));
     meshEigen->rotate(rotation,Vector3d(0,0,0));
     meshEigen->updateBoundingBox();
     polyline.resetChecker();
-    polyline.setCheckerDimension(meshEigen->getNumberFaces());
+    polyline.setCheckerDimension(nPlaneUser,meshEigen->getNumberFaces());
     polyline.check(meshEigen,nextColor);
     mainWindow->updateGlCanvas();
 
     rotation = getRotationMatrix(axis, -(stepAngle * halfC * increse));
     meshEigen->rotate(rotation,Vector3d(0,0,0));
-    filename.truncate(filename.size()-5);
+    filename.truncate(filename.size()-4);
     QString format = ".obj";
-    meshEigen->saveOnObj((filename += QString::number(increse)+=format).toUtf8().constData());
+    meshEigen->saveOnObj((filename + QString::number(increse)+format).toUtf8().constData());
+
     for(unsigned int i = 0 ; i < meshEigen->getNumberFaces(); i++){
+        c.setHsv(100,0,127);
         meshEigen->setFaceColor(c.redF(), c.greenF(), c.blueF(), i);
     }
-    if(increse == nPlaneUser)
-        ui->stepByStep->setEnabled(false);
     increse++;
+    nextColor += stepColor;
+    for(int i = 0; i < nPlaneUser; i++){
+        Matrix3d rotation = getRotationMatrix(axis, (stepAngle * halfC * increse));
+        meshEigen->rotate(rotation,Vector3d(0,0,0));
+        meshEigen->updateBoundingBox();
+
+        polyline.check(meshEigen,nextColor);
+        mainWindow->updateGlCanvas();
+
+        rotation = getRotationMatrix(axis, -(stepAngle * halfC * increse));
+        meshEigen->rotate(rotation,Vector3d(0,0,0));
+
+        meshEigen->saveOnObj((filename + QString::number(increse)+format).toUtf8().constData());
+        for(unsigned int i = 0 ; i < meshEigen->getNumberFaces(); i++){
+            meshEigen->setFaceColor(c.redF(), c.greenF(), c.blueF(), i);
+        }
+        increse++;
+        nextColor += stepColor;
+    }
+//>>>>>>> Stashed changes
+
+    //if(increse == nPlaneUser)
+        ui->stepByStep->setEnabled(false);
+    //increse++;
 }
 
 

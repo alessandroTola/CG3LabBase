@@ -241,27 +241,43 @@ void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin, int color){
     meshPoly = *meshEigenOrigin;
 
     CGALInterface::AABBTree eigenTree(*meshEigenOrigin);
-    std::vector<int> blackList;
+    QColor c;
+    Pointi f;
+    VectI blackList;
     Vec3 e1, e2, e3, n;
     Vec3 a(0,1,0);
-    Pointi f;
     int face;
-    double max = meshEigenOrigin->getBoundingBox().maxY() + 100 ;
-    double min = meshEigenOrigin->getBoundingBox().minY() - 100 ;
-    QColor c;
+    double max = meshEigenOrigin->getBoundingBox().maxY()+50;
+    double min = meshEigenOrigin->getBoundingBox().minY()-50;
 
     for(unsigned int i = 0; i < meshEigenOrigin->getNumberFaces(); i++){
-        if(checker[i] != 1){
+        if(checker[indexPlane][i] != 1){
             f = meshEigenOrigin->getFace(i);
             e1 = meshEigenOrigin->getVertex(f.x());
             e2 = meshEigenOrigin->getVertex(f.y());
             e3 = meshEigenOrigin->getVertex(f.z());
             n = meshEigenOrigin->getFaceNormal(i);
             Pointd bar((e1+e2+e3)/3);
-            if(bar.y() > 0){
-                eigenTree.getIntersectEigenFaces(Pointd(bar.x(), max, bar.z()), Pointd(bar.x(), 0, bar.z()), blackList);
-                if(blackList.size() > 0){
-                    face = serchMaxY(blackList,meshEigenOrigin);
+            eigenTree.getIntersectEigenFaces(Pointd(bar.x(), max, bar.z()), Pointd(bar.x(), min, bar.z()), blackList);
+            face = serchMaxY(blackList,meshEigenOrigin);
+            checker[indexPlane][face] = 1;
+            c.setHsv(color, 255,255);
+            meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),face);
+            face = serchMinY(blackList,meshEigenOrigin);
+            checker[indexPlane][face] = 1;
+            c.setHsv(120+color, 255,255);
+            meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),face);
+            /*Pointd bar((e1+e2+e3)/3);
+            eigenTree.getIntersectEigenFaces(Pointd(bar.x(), max, bar.z()), Pointd(bar.x(), min, bar.z()), blackList);
+            if(bar.y() >= 0){
+                face = serchMaxY(blackList,meshEigenOrigin);
+                checker[face] = 1;
+                c.setHsv(color, 255,255);
+                meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),face);
+            } else {
+                if(bar.y() < 0){
+                    face = serchMinY(blackList,meshEigenOrigin);
+//>>>>>>> Stashed changes
                     checker[face] = 1;
                     c.setHsv(color, 255,255);
                     meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),face);
@@ -302,12 +318,12 @@ void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin, int color){
                             checker[i] = 1;
                         }
                     }
-                }qDebug()<< bar.y() << "dio cane1";
-            }
-            if(bar.y()==0)qDebug()<< bar.y() << "dio cane3";
+                }
+            }*/
             blackList.clear();
         }
     }
+    indexPlane++;
 }
 
 void PolylinesCheck::rotatePoint(Eigen::Matrix3d rotation, Pointd p){
@@ -335,8 +351,13 @@ int PolylinesCheck::serchMinY (std::vector<int> lista, DrawableEigenMesh *meshEi
     return min;
 }
 
-void PolylinesCheck::setCheckerDimension (int dimension){
-    checker.resize(dimension);
+void PolylinesCheck::setCheckerDimension (int nplane, int dimension)
+{
+    checker.resize(nplane+=1);
+    for(int i = 0; i< nplane ; i++){
+        checker[i].resize(dimension);
+    }
+//>>>>>>> Stashed changes
 }
 
 void PolylinesCheck::resetChecker()
@@ -344,7 +365,9 @@ void PolylinesCheck::resetChecker()
     checker.clear();
 }
 
-std::vector<int>    PolylinesCheck::getChecker  (){
+//<<<<<<< Updated upstream
+MatrixI PolylinesCheck::getChecker()
+{
     return checker;
 }
 

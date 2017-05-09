@@ -7,8 +7,8 @@
 #include <Eigen/Dense>
 
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/aabbtree.h>
-#include <CGAL/cgalinterface.h>
+#include <cgal/aabbtree.h>
+#include <cgal/cgalinterface.h>
 #include <CGAL/Cartesian/Cartesian_base.h>
 #include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
@@ -38,19 +38,18 @@ typedef Mesh::Property_map<vertex_descriptor, Point3>             MapPoints;
 typedef std::vector<std::vector<Pointd>>                          ArrayPoint;
 typedef std::vector<Point2>                                       Array2dPoint;
 typedef Eigen::Matrix3d                                           Matrix;
+//<<<<<<< Updated upstream
+//=======
+typedef std::vector<int>                                          VectI;
+typedef std::vector<VectI>                                        MatrixI;
+//>>>>>>> Stashed changes
 
 class PolylinesCheck
 {
     public:
         PolylinesCheck();
 
-        ArrayPoint   poly;
-
-        Array2dPoint poly2d;
-
-        Pointd  minP;
-
-        Pointd  maxP;
+        //Pointd  maxP;
 
         void    minMaxPoints            (const Mesh& mesh, int selection);
 
@@ -84,10 +83,11 @@ class PolylinesCheck
 
         int     serchMaxY               (std::vector<int> lista, DrawableEigenMesh *meshEigenOrigin);
 
-        void    setCheckerDimension     (int dimension);
+        void    setCheckerDimension     (int nplane, int dimension);
 
         void    resetChecker            ();
 
+/*<<<<<<< Updated upstream
         std::vector<int>    getChecker  ();
     private:
 
@@ -98,6 +98,24 @@ class PolylinesCheck
         Vec3    normalplane;
         std::vector<int> checker;
         double  d;
+=======*/
+        MatrixI   getChecker              ();
+
+    private:
+
+        DrawableEigenMesh   meshPoly;
+        //Array2dPoint        poly2d;
+        //ArrayPoint          poly;
+        Point3              min;
+        Point3              max;
+        Pointd              minP;
+        Pointd              maxP;
+        Pointd              I;
+        MatrixI             checker;
+        Vec3                normalplane;
+        double              d;
+        int                 indexPlane=0;
+//>>>>>>> Stashed changes
 };
 
 #endif // POLYLINES_H
