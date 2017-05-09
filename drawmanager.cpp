@@ -4,6 +4,8 @@
 #include <QtGui>
 #include <string>
 
+#define halfC (M_PI / 180)
+
 DrawManager::DrawManager(QWidget *parent) :
     QFrame(parent),
     ui(new Ui::DrawManager),
@@ -42,6 +44,19 @@ void DrawManager::setButtonMeshLoaded(bool b){
     ui->check->setEnabled(b);
     ui->stepByStep->setEnabled(b);
     ui->meshToOrigin->setEnabled(b);
+
+    ui->selectAxis->setEnabled(b);
+        QList<QWidget*> list = ui->selectAxis->findChildren<QWidget*>() ;
+        foreach( QWidget* w, list )
+        {
+           w->setEnabled(b) ;
+        }
+        ui->selectAxis_2->setEnabled(b);
+        QList<QWidget*> list2 = ui->selectAxis_2->findChildren<QWidget*>() ;
+        foreach( QWidget* w, list2 )
+        {
+           w->setEnabled(b) ;
+        }
 
 }
 
@@ -375,7 +390,6 @@ void DrawManager::on_drawPoint_clicked()
 
 void DrawManager::on_translate_clicked()
 {
-    //Pointd centro = -meshEigen->getBarycenter();
     Pointd centro(-((polyline.getMax()-polyline.getMin())/2+polyline.getMin()));
     meshEigen->translate(centro);
     Matrix3d rotation;
@@ -403,7 +417,6 @@ void DrawManager::on_translate_clicked()
 
 void DrawManager::on_check_clicked()
 {
-    const double halfC = M_PI / 180;
     int angleCStart = 120;
     Matrix3d rotation;
     Vec3 axis(1,0,0);
@@ -415,10 +428,7 @@ void DrawManager::on_check_clicked()
         meshEigen->updateBoundingBox();
         polyline.check(meshEigen,angleCStart,0);
         mainWindow->updateGlCanvas();
-        //polyline.check(meshEigen,angleColor);
     }
-    //meshEigen->updateBoundingBox();
-    //mainWindow->updateGlCanvas();
 }
 
 void DrawManager::on_stepByStep_clicked()
@@ -427,7 +437,6 @@ void DrawManager::on_stepByStep_clicked()
         on_saveMesh_clicked();
     }
 
-    const double halfC = M_PI / 180;
     Vec3 axis(1,0,0);
     QColor c;
     c.setHsv(100,0,255);
@@ -469,11 +478,7 @@ void DrawManager::on_stepByStep_clicked()
         increse++;
         nextColor += stepColor;
     }
-//>>>>>>> Stashed changes
-
-    //if(increse == nPlaneUser)
         ui->stepByStep->setEnabled(false);
-    //increse++;
 }
 
 
@@ -499,5 +504,164 @@ void DrawManager::on_saveMesh_clicked()
         std::cerr << "Saving to file \"" << filename.toLocal8Bit().data() << "\"...";
         meshEigen->saveOnObj(filename.toUtf8().constData());
     }
+}
 
+void DrawManager::on_resetParam_clicked()
+{
+    increse = 0;
+    stepColor = 0;
+    nextColor = 0;
+    polyline.resetChecker();
+    ui->stepByStep->setEnabled(true);
+}
+
+void DrawManager::on_xRotCord_editingFinished()
+{
+    QLineEdit *xRotate = new QLineEdit;
+    xRotate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, xRotate));
+    xRot = ui->xRotCord->text().toDouble();
+}
+
+void DrawManager::on_yRotCord_editingFinished()
+{
+    QLineEdit *yRotate = new QLineEdit;
+    yRotate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, yRotate));
+    yRot = ui->yRotCord->text().toDouble();
+}
+
+void DrawManager::on_zRotCord_editingFinished()
+{
+    QLineEdit *zRotate = new QLineEdit;
+    zRotate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, zRotate));
+    zRot = ui->zRotCord->text().toDouble();
+}
+
+void DrawManager::on_xMenoR_clicked()
+{
+    rotate(0);
+}
+
+void DrawManager::on_xPiuR_clicked()
+{
+    rotate(1);
+}
+
+void DrawManager::on_yMenoR_clicked()
+{
+    rotate(2);
+}
+
+void DrawManager::on_yPiuR_clicked()
+{
+    rotate(3);
+}
+
+void DrawManager::on_zMenoR_clicked()
+{
+    rotate(4);
+}
+
+void DrawManager::on_zPiuR_clicked()
+{
+    rotate(5);
+}
+
+void DrawManager::rotate(int axisP)
+{
+    Matrix3d rotation;
+    Vec3 axis;
+    switch (axisP) {
+    case 0:
+        axis = Vec3(1,0,0);
+        rotation = getRotationMatrix(axis, -(xRot * halfC));
+        break;
+    case 1:
+        axis = Vec3(1,0,0);
+        rotation = getRotationMatrix(axis, (xRot * halfC));
+        break;
+    case 2:
+        axis = Vec3(0,1,0);
+        rotation = getRotationMatrix(axis, -(yRot * halfC));
+        break;
+    case 3:
+        axis = Vec3(0,1,0);
+        rotation = getRotationMatrix(axis, (yRot * halfC));
+        break;
+    case 4:
+        axis = Vec3(0,0,1);
+        rotation = getRotationMatrix(axis, -(zRot * halfC));
+        break;
+    case 5:
+        axis = Vec3(0,0,1);
+        rotation = getRotationMatrix(axis, (zRot * halfC));
+        break;
+    default:
+        break;
+    }
+    meshEigen->rotate(rotation,Vector3d(0,0,0));
+    meshEigen->updateBoundingBox();
+    mainWindow->updateGlCanvas();
+}
+
+void DrawManager::on_xTransCord_editingFinished()
+{
+    QLineEdit *xTranslate = new QLineEdit;
+    xTranslate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, xTranslate));
+    xTrans = ui->xTransCord->text().toDouble();
+}
+
+void DrawManager::on_yTransCord_editingFinished()
+{
+    QLineEdit *yTranslate = new QLineEdit;
+    yTranslate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, yTranslate));
+    yTrans = ui->yTransCord->text().toDouble();
+}
+
+void DrawManager::on_zTransCord_editingFinished()
+{
+    QLineEdit *zTranslate = new QLineEdit;
+    zTranslate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, zTranslate));
+    zTrans = ui->zTransCord->text().toDouble();
+}
+
+void DrawManager::on_xMeno_clicked()
+{
+    Pointd translateP(xTrans, 0, 0);
+    translate(-translateP);
+}
+
+void DrawManager::on_xPiu_clicked()
+{
+    Pointd translateP(xTrans, 0, 0);
+    translate(translateP);
+}
+
+void DrawManager::on_yMeno_clicked()
+{
+    Pointd translateP(0, yTrans, 0);
+    translate(-translateP);
+}
+
+void DrawManager::on_yPiu_clicked()
+{
+    Pointd translateP(0, yTrans, 0);
+    translate(translateP);
+}
+
+void DrawManager::on_zMeno_clicked()
+{
+    Pointd translateP(0, 0, zTrans);
+    translate(-translateP);
+}
+
+void DrawManager::on_zPiu_clicked()
+{
+    Pointd translateP(0, 0, zTrans);
+    translate(translateP);
+}
+
+void DrawManager::translate(Pointd point)
+{
+    meshEigen->translate(point);
+    mainWindow->updateGlCanvas();
 }

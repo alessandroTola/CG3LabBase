@@ -131,35 +131,35 @@ void PolylinesCheck::checkIntersect(DrawableEigenMesh* meshEigenOrigin, Pointd p
             if(flag){
                 switch (selection) {
                 case 0:
-                    if(minP.x() > I.x()/*meshEigenOrigin->getVertex(f.x()).x()*/){
-                        minP = I/*meshEigenOrigin->getVertex(f.x())*/;
+                    if(minP.x() > I.x()){
+                        minP = I;
                     }
-                    if(maxP.x() < I.x()/*meshEigenOrigin->getVertex(f.x()).x()*/){
-                        maxP = I/*meshEigenOrigin->getVertex(f.x())*/;
+                    if(maxP.x() < I.x()){
+                        maxP = I;
                     }
                     break;
                 case 1:
-                    if(minP.y() > I.y()/*meshEigenOrigin->getVertex(f.y()).y()*/){
-                        minP = I/*meshEigenOrigin->getVertex(f.y())*/;
+                    if(minP.y() > I.y()){
+                        minP = I;
                     }
-                    if(maxP.y() < I.y()/*meshEigenOrigin->getVertex(f.y()).y()*/){
-                        maxP = I/*meshEigenOrigin->getVertex(f.y())*/;
+                    if(maxP.y() < I.y()){
+                        maxP = I;
                     }
                     break;
                 case 2:
-                    if(minP.z() > I.z()/*meshEigenOrigin->getVertex(f.z()).z()*/){
-                        minP = I/*meshEigenOrigin->getVertex(f.z())*/;
+                    if(minP.z() > I.z()){
+                        minP = I;
                     }
-                    if(maxP.z() < I.z()/*meshEigenOrigin->getVertex(f.z()).z()*/){
-                        maxP = I/*meshEigenOrigin->getVertex(f.z())*/;
+                    if(maxP.z() < I.z()){
+                        maxP = I;
                     }
                     break;
                 default:
                     break;
                 }
             } else {
-                minP = I;//meshEigenOrigin->getVertex(f.x());
-                maxP = I;//meshEigenOrigin->getVertex(f.x());
+                minP = I;
+                maxP = I;
                 flag = true;
             }
         }
@@ -168,13 +168,6 @@ void PolylinesCheck::checkIntersect(DrawableEigenMesh* meshEigenOrigin, Pointd p
 
 int PolylinesCheck::intersect3D_RayTriangle( Pointd p0, Pointd p1, Pointd v0, Pointd v1, Pointd v2){
 
-    // Copyright 2001 softSurfer, 2012 Dan Sunday
-    // This code may be freely used and modified for any purpose
-    // providing that this copyright notice is included with it.
-    // SoftSurfer makes no warranty for this code, and cannot be held
-    // liable for any real or imagined damage resulting from its use.
-    // Users of this code must verify correctness for their application.
-    //
     //intersect3D_RayTriangle(): find the 3D intersection of a ray with a triangle
     //    Input:  a ray R, and a triangle T
     //    Output: *I = intersection point (when it exists)
@@ -186,7 +179,6 @@ int PolylinesCheck::intersect3D_RayTriangle( Pointd p0, Pointd p1, Pointd v0, Po
     Vec3    e1, e2, n;                      // triangle vectors
     Vec3    dir, w0, w;                     // ray vectors
     double     r, a, b;                     // params to calc ray-plane intersect
-    //Pointd I;
     // get triangle edge vectors and plane normal
     e1 = v1 - v0;
     e2 = v2 - v0;
@@ -277,7 +269,6 @@ void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin, int color, int in
             } else {
                 if(bar.y() < 0){
                     face = serchMinY(blackList,meshEigenOrigin);
-//>>>>>>> Stashed changes
                     checker[face] = 1;
                     c.setHsv(color, 255,255);
                     meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),face);
@@ -357,7 +348,6 @@ void PolylinesCheck::setCheckerDimension (int nplane, int dimension)
     for(int i = 0; i< nplane ; i++){
         checker[i].resize(dimension);
     }
-//>>>>>>> Stashed changes
 }
 
 void PolylinesCheck::resetChecker()
@@ -365,7 +355,6 @@ void PolylinesCheck::resetChecker()
     checker.clear();
 }
 
-//<<<<<<< Updated upstream
 MatrixI PolylinesCheck::getChecker()
 {
     return checker;

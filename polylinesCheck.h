@@ -38,11 +38,8 @@ typedef Mesh::Property_map<vertex_descriptor, Point3>             MapPoints;
 typedef std::vector<std::vector<Pointd>>                          ArrayPoint;
 typedef std::vector<Point2>                                       Array2dPoint;
 typedef Eigen::Matrix3d                                           Matrix;
-//<<<<<<< Updated upstream
-//=======
 typedef std::vector<int>                                          VectI;
 typedef std::vector<VectI>                                        MatrixI;
-//>>>>>>> Stashed changes
 
 class PolylinesCheck
 {
@@ -102,7 +99,6 @@ class PolylinesCheck
         MatrixI             checker;
         Vec3                normalplane;
         double              d;
-//>>>>>>> Stashed changes
 };
 
 #endif // POLYLINES_H
