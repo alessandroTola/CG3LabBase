@@ -40,6 +40,7 @@ typedef std::vector<Point2>                                       Array2dPoint;
 typedef Eigen::Matrix3d                                           Matrix;
 typedef std::vector<int>                                          VectI;
 typedef std::vector<VectI>                                        MatrixI;
+typedef std::vector<int>                                          IntVec;
 
 class PolylinesCheck
 {
@@ -86,11 +87,15 @@ class PolylinesCheck
 
         MatrixI   getChecker            ();
 
-    private:
+        void searchNoVisibleFace        ();
+
+        IntVec getNotVisibleFace        ();
+private:
 
         DrawableEigenMesh   meshPoly;
         Array2dPoint        poly2d;
         ArrayPoint          poly;
+        IntVec              notVisibleFace;
         Point3              min;
         Point3              max;
         Pointd              minP;

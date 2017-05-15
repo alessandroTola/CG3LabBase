@@ -121,6 +121,9 @@ void DrawManager::on_loadMesh_clicked()
     nextColor = 0;
     cylinder = 0.01;
     increse = 0;
+    xRot = 0;
+    yRot = 0;
+    zRot = 0;
     QColor c;
     c.setHsv(100,0,255);
 
@@ -420,6 +423,7 @@ void DrawManager::on_check_clicked()
     int angleCStart = 120;
     Matrix3d rotation;
     Vec3 axis(1,0,0);
+    QColor c;
     polyline.check(meshEigen,angleCStart,0);
 
     for(int i = 0; i < nPlaneUser; i++){
@@ -429,6 +433,19 @@ void DrawManager::on_check_clicked()
         polyline.check(meshEigen,angleCStart,0);
         mainWindow->updateGlCanvas();
     }
+    polyline.searchNoVisibleFace();
+    if(polyline.getNotVisibleFace().size() > 0){
+        c.setHsv(0,255,255);
+        for(int i : polyline.getNotVisibleFace()){
+            meshEigen->setFaceColor(c.redF(), c.greenF(), c.blueF(), i);
+        }
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Attenzione");
+        msgBox.setText("Con questa configurazione alcune facce non sono visibili");
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.exec();
+    }
+
 }
 
 void DrawManager::on_stepByStep_clicked()
@@ -441,6 +458,12 @@ void DrawManager::on_stepByStep_clicked()
     QColor c;
     c.setHsv(100,0,255);
     Matrix3d rotation = getRotationMatrix(axis, (stepAngle * halfC * increse));
+
+    for(unsigned int i = 0 ; i < meshEigen->getNumberFaces(); i++){
+        c.setHsv(100,0,127);
+        meshEigen->setFaceColor(c.redF(), c.greenF(), c.blueF(), i);
+    }
+
     meshEigen->rotate(rotation,Vector3d(0,0,0));
     meshEigen->updateBoundingBox();
     polyline.resetChecker();
@@ -511,6 +534,7 @@ void DrawManager::on_resetParam_clicked()
     increse = 0;
     stepColor = 0;
     nextColor = 0;
+    nPlaneUser = 1;
     polyline.resetChecker();
     ui->stepByStep->setEnabled(true);
 }

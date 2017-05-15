@@ -224,12 +224,10 @@ int PolylinesCheck::intersect3D_RayTriangle( Pointd p0, Pointd p1, Pointd v0, Po
         return 0;
 
     return 1;                               // I is in T
-
-
-
 }
 
 void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin, int color, int indexPlane){
+
     meshPoly = *meshEigenOrigin;
 
     CGALInterface::AABBTree eigenTree(*meshEigenOrigin);
@@ -237,80 +235,42 @@ void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin, int color, int in
     Pointi f;
     VectI blackList;
     Vec3 e1, e2, e3, n;
-    Vec3 a(0,1,0);
     int face;
     double max = meshEigenOrigin->getBoundingBox().maxY()+50;
     double min = meshEigenOrigin->getBoundingBox().minY()-50;
 
     for(unsigned int i = 0; i < meshEigenOrigin->getNumberFaces(); i++){
+        if(notVisibleFace.size() > 0){
+            c.setHsv(0,255,255);
+            for(int j : notVisibleFace){
+                checker[indexPlane][j]=1;
+                meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),j);
+            }
+        }
         if(checker[indexPlane][i] != 1){
             f = meshEigenOrigin->getFace(i);
             e1 = meshEigenOrigin->getVertex(f.x());
             e2 = meshEigenOrigin->getVertex(f.y());
             e3 = meshEigenOrigin->getVertex(f.z());
-            n = meshEigenOrigin->getFaceNormal(i);
+
             Pointd bar((e1+e2+e3)/3);
+            //cerco le intersezioni della retta passante per la i-esima faccia
             eigenTree.getIntersectEigenFaces(Pointd(bar.x(), max, bar.z()), Pointd(bar.x(), min, bar.z()), blackList);
+            //Prendo quella che si trova più in alto
             face = serchMaxY(blackList,meshEigenOrigin);
-            checker[indexPlane][face] = 1;
-            c.setHsv(color, 255,255);
-            meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),face);
-            face = serchMinY(blackList,meshEigenOrigin);
-            checker[indexPlane][face] = 1;
-            c.setHsv(120+color, 255,255);
-            meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),face);
-            /*Pointd bar((e1+e2+e3)/3);
-            eigenTree.getIntersectEigenFaces(Pointd(bar.x(), max, bar.z()), Pointd(bar.x(), min, bar.z()), blackList);
-            if(bar.y() >= 0){
-                face = serchMaxY(blackList,meshEigenOrigin);
-                checker[face] = 1;
+            if(checker[indexPlane][face] != 1){
+                checker[indexPlane][face] = 1;
                 c.setHsv(color, 255,255);
                 meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),face);
-            } else {
-                if(bar.y() < 0){
-                    face = serchMinY(blackList,meshEigenOrigin);
-                    checker[face] = 1;
-                    c.setHsv(color, 255,255);
-                    meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),face);
-                    blackList.clear();
-                    continue;
-                } else {
-                    if(n.dot(a) <= 0){
-                        c.setHsv(color, 255,255);
-                        meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),i);
-                        checker[i] = 1;
-                    } else {
-                        if(n.dot(a) >= 0){
-                            c.setHsv(120+color, 255,255);
-                            meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),i);
-                            checker[i] = 1;
-                        }
-                    }
-                }qDebug()<< bar.y() << "dio cane2";
             }
-            if(bar.y() < 0){
-                eigenTree.getIntersectEigenFaces(Pointd(bar.x(), 0, bar.z()), Pointd(bar.x(), min, bar.z()), blackList);
-                if(blackList.size() > 0){
-                    face = serchMinY(blackList,meshEigenOrigin);
-                    checker[face] = 1;
-                    c.setHsv(120+color, 255,255);
-                    meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),face);
-                    blackList.clear();
-                    continue;
-                } else {
-                    if(n.dot(a) <= 0){
-                        c.setHsv(color, 255,255);
-                        meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),i);
-                        checker[i] = 1;
-                    } else {
-                        if(n.dot(a) >= 0){
-                            c.setHsv(120+color, 255,255);
-                            meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),i);
-                            checker[i] = 1;
-                        }
-                    }
-                }
-            }*/
+            //Prendo quella che si trova più in basso
+            face = serchMinY(blackList,meshEigenOrigin);
+            if(checker[indexPlane][face] != 1){
+                checker[indexPlane][face] = 1;
+                c.setHsv(120+color, 255,255);
+                meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),face);
+            }
+            //Svuoto la lista
             blackList.clear();
         }
     }
@@ -358,6 +318,19 @@ void PolylinesCheck::resetChecker()
 MatrixI PolylinesCheck::getChecker()
 {
     return checker;
+}
+
+void PolylinesCheck::searchNoVisibleFace (){
+
+    for(unsigned int i = 0; i < checker[0].size();i++){
+        if(checker[0][i]!=1)
+            notVisibleFace.push_back(i);
+    }
+}
+
+IntVec PolylinesCheck::getNotVisibleFace()
+{
+    return notVisibleFace;
 }
 
 

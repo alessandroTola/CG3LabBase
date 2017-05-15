@@ -51,6 +51,7 @@ typedef Mesh::Vertex_index                        vertex_descriptor;
 typedef Mesh::Face_index                            face_descriptor;
 typedef Mesh::Vertex_range                             verticesIter;
 typedef Mesh::Property_map<vertex_descriptor, K::Point_3> MapPoints;
+
 typedef IO output;
 
 class DrawManager : public QFrame
@@ -123,45 +124,45 @@ class DrawManager : public QFrame
 
         void on_resetParam_clicked              ();
 
-                void on_xRotCord_editingFinished        ();
+        void on_xRotCord_editingFinished        ();
 
-                void on_yRotCord_editingFinished        ();
+        void on_yRotCord_editingFinished        ();
 
-                void on_zRotCord_editingFinished        ();
+        void on_zRotCord_editingFinished        ();
 
-                void on_xMenoR_clicked                  ();
+        void on_xMenoR_clicked                  ();
 
-                void on_xPiuR_clicked                   ();
+        void on_xPiuR_clicked                   ();
 
-                void on_yMenoR_clicked                  ();
+        void on_yMenoR_clicked                  ();
 
-                void on_yPiuR_clicked                   ();
+        void on_yPiuR_clicked                   ();
 
-                void on_zMenoR_clicked                  ();
+        void on_zMenoR_clicked                  ();
 
-                void on_zPiuR_clicked                   ();
+        void on_zPiuR_clicked                   ();
 
-                void on_xTransCord_editingFinished      ();
+        void on_xTransCord_editingFinished      ();
 
-                void on_yTransCord_editingFinished      ();
+        void on_yTransCord_editingFinished      ();
 
-                void on_zTransCord_editingFinished      ();
+        void on_zTransCord_editingFinished      ();
 
-                void on_xMeno_clicked                   ();
+        void on_xMeno_clicked                   ();
 
-                void on_xPiu_clicked                    ();
+        void on_xPiu_clicked                    ();
 
-                void on_yMeno_clicked                   ();
+        void on_yMeno_clicked                   ();
 
-                void on_yPiu_clicked                    ();
+        void on_yPiu_clicked                    ();
 
-                void on_zMeno_clicked                   ();
+        void on_zMeno_clicked                   ();
 
-                void on_zPiu_clicked                    ();
+        void on_zPiu_clicked                    ();
 
-                void translate                          (Pointd point);
+        void translate                          (Pointd point);
 
-                void rotate                             (int axis);
+        void rotate                             (int axis);
 
 private:
 
