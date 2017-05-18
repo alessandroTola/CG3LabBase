@@ -22,6 +22,7 @@
 #include <QStatusBar>
 #include <QDebug>
 #include <QFrame>
+#include "gurobi_c++.h"
 
 using namespace CGAL;
 
