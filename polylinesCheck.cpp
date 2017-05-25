@@ -1,4 +1,5 @@
 #include "polylinesCheck.h"
+using namespace std;
 
 #define SMALL_NUM   0.0000000001 // anything that avoids division overflow
 
@@ -239,14 +240,14 @@ void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin, int color, int in
     double max = meshEigenOrigin->getBoundingBox().maxY()+50;
     double min = meshEigenOrigin->getBoundingBox().minY()-50;
 
-    for(unsigned int i = 0; i < meshEigenOrigin->getNumberFaces(); i++){
-        if(notVisibleFace.size() > 0){
+    for(unsigned int i = 0; i < checker[indexPlane].size(); i++){
+        /*if(notVisibleFace.size() > 0){
             c.setHsv(0,255,255);
             for(int j : notVisibleFace){
                 checker[indexPlane][j]=1;
                 meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),j);
             }
-        }
+        }*/
         if(checker[indexPlane][i] != 1){
             f = meshEigenOrigin->getFace(i);
             e1 = meshEigenOrigin->getVertex(f.x());
@@ -328,11 +329,99 @@ void PolylinesCheck::searchNoVisibleFace (){
     }
 }
 
-IntVec PolylinesCheck::getNotVisibleFace()
+VectI PolylinesCheck::getNotVisibleFace()
 {
     return notVisibleFace;
 }
 
+void PolylinesCheck::minimizeProblem(){
+    int nOrientation = checker.size();
+    int nTriangles = checker[0].size();
+    int e, nSolutions, i;
+    int set[nOrientation][nTriangles];
+
+    for(int i = 0; i < nOrientation; i++){
+        for(int j = 0; j < nTriangles; j++){
+            set[i][j]=checker[i][j];
+        }
+    }
+    try{
+        GRBEnv env = GRBEnv();
+
+        GRBModel model = GRBModel(env);
+
+        GRBVar *orientation = model.addVars(nOrientation, GRB_BINARY);
+        //GRBVar *triangle = model.addVars(nTriangles, GRB_BINARY);
+
+        //creo le variabili o e t per gli orientamenti e per i triangoli
+        for (e = 0; e < nOrientation; e++) {
+          ostringstream vname;
+          vname << "o" << e;
+          orientation[e].set(GRB_StringAttr_VarName, vname.str());
+        }
+
+        /*for (e = 0; e < nTriangles; e++) {
+          ostringstream vname;
+          vname << "t" << e;
+          triangle[e].set(GRB_StringAttr_VarName, vname.str());
+        }*/
+
+        model.update();
+
+        GRBLinExpr sum;
+
+        for(int j = 0; j < nTriangles; j++){
+            sum = 0;
+            for(int i = 0 ; i < nOrientation ; i++){
+                sum+=orientation[i]*set[i][j];
+            }
+            model.addConstr(sum >=1);
+        }
+
+        GRBLinExpr expr;
+        expr = 0;
+        for (int j = 0; j < nOrientation; j++) {
+            expr += orientation[j];
+        }
+
+        model.setObjective(expr, GRB_MAXIMIZE);
+
+        model.optimize();
+
+        nSolutions = model.get(GRB_IntAttr_SolCount);
+        for (i = 0; i < nOrientation; i++) {
+          model.set(GRB_IntParam_ObjNumber, i);
+
+          cout << "\tSet " << i;
+          for (e = 0; e < nSolutions; e++) {
+            cout << " ";
+            model.set(GRB_IntParam_SolutionNumber, e);
+            int val = model.get(GRB_IntAttr_NumObj);
+            cout << std::setw(6) << val;
+          }
+          cout << endl;
+        }
+
+    }
+    catch (GRBException e) {
+      cout << "Error code = " << e.getErrorCode() << endl;
+      cout << e.getMessage() << endl;
+    }
+    catch (...) {
+      cout << "Exception during optimization" << endl;
+    }
+}
+
+void PolylinesCheck::updateChecker(){
+    sort(notVisibleFace.begin(), notVisibleFace.end());
+
+    for(int i = notVisibleFace.size()-1 ; i >= 0 ; i--){
+        for(int j = 0 ; j < checker.size(); j++){
+            checker[j].erase(checker[j].begin()+notVisibleFace[i]);
+        }
+    }
+
+}
 
 
 

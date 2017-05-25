@@ -8,13 +8,12 @@
 
 #include <CGAL/Surface_mesh.h>
 #include <cgal/aabbtree.h>
-#include <cgal/cgalinterface.h>
 #include <CGAL/Cartesian/Cartesian_base.h>
 #include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 #include <CGAL/Plane_3.h>
 #include <CGAL/Filtered_kernel.h>
-
+#include <cgal/cgalslicer.h>
 #include <common/utils.h>
 
 #include <QFileDialog>
@@ -25,6 +24,7 @@
 #include "gurobi_c++.h"
 
 using namespace CGAL;
+using namespace std;
 
 typedef Exact_predicates_inexact_constructions_kernel             K;
 typedef Simple_cartesian<double>                                  KK;
@@ -41,7 +41,6 @@ typedef std::vector<Point2>                                       Array2dPoint;
 typedef Eigen::Matrix3d                                           Matrix;
 typedef std::vector<int>                                          VectI;
 typedef std::vector<VectI>                                        MatrixI;
-typedef std::vector<int>                                          IntVec;
 
 class PolylinesCheck
 {
@@ -90,13 +89,19 @@ class PolylinesCheck
 
         void searchNoVisibleFace        ();
 
-        IntVec getNotVisibleFace        ();
+        VectI getNotVisibleFace        ();
+
+        void minimizeProblem();
+
+        void updateChecker();
+
+
 private:
 
         DrawableEigenMesh   meshPoly;
         Array2dPoint        poly2d;
         ArrayPoint          poly;
-        IntVec              notVisibleFace;
+        VectI               notVisibleFace;
         Point3              min;
         Point3              max;
         Pointd              minP;
