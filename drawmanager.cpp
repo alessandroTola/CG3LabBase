@@ -443,7 +443,9 @@ void DrawManager::on_check_clicked()
         msgBox.setWindowTitle("Attenzione");
         msgBox.setText("Con questa configurazione alcune facce non sono visibili");
         msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.exec();
+        if(msgBox.exec() == QMessageBox::Ok){
+            polyline.updateChecker();
+        }
     }
 
 }
@@ -502,6 +504,7 @@ void DrawManager::on_stepByStep_clicked()
         nextColor += stepColor;
     }
         ui->stepByStep->setEnabled(false);
+        polyline.minimizeProblem();
 }
 
 
