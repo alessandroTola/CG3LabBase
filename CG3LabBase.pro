@@ -17,7 +17,7 @@ macx{
     exists($$(GUROBI_HOME)){
         message (Gurobi)
         INCLUDEPATH += $$(GUROBI_HOME)/include
-        LIBS += -L$$(GUROBI_HOME)/lib -lgurobi_stdc++ -lgurobi70
+        LIBS += -L$$(GUROBI_HOME)/lib -lgurobi_c++ -lgurobi70
         DEFINES += GUROBI_DEFINED
     }
 }
@@ -37,7 +37,7 @@ include (viewer/viewer.pri)
 #Dcel module: contains a Double Connected-Edge List data structure
 #Requires: Common module, boost;
 #Optional: Cgal module, viewer module
-#include (dcel/dcel.pri)
+include (dcel/dcel.pri)
 
 #Cgal module: contains an interface to some functionalities of CGAL library
 #Requires: Common module, libCgal; Optional: Dcel module

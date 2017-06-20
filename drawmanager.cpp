@@ -3,6 +3,7 @@
 
 #include <QtGui>
 #include <string>
+#include <QDebug>
 
 #define halfC (M_PI / 180)
 
@@ -13,6 +14,7 @@ DrawManager::DrawManager(QWidget *parent) :
 
 {
     ui->setupUi(this);
+    connect(mainWindow, SIGNAL(objectPicked(uint)),this, SLOT(on_triangleClicked(uint)));
 }
 
 DrawManager::~DrawManager(){
@@ -42,7 +44,7 @@ void DrawManager::setButtonMeshLoaded(bool b){
     ui->Sphere->setEnabled(b);
     ui->saveMesh->setEnabled(b);
     ui->check->setEnabled(b);
-    ui->stepByStep->setEnabled(b);
+    ui->resetParam->setEnabled(b);
     ui->meshToOrigin->setEnabled(b);
 
     ui->selectAxis->setEnabled(b);
@@ -58,30 +60,6 @@ void DrawManager::setButtonMeshLoaded(bool b){
            w->setEnabled(b) ;
         }
 
-}
-
-void DrawManager::on_x_editingFinished()
-{
-    QLineEdit *xCordinate = new QLineEdit;
-    xCordinate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, xCordinate));
-    vectorUser.setX(ui->x->text().toDouble());
-    //QString prova = QString::number(vectorUser->x());
-    //ui->x->setText(prova + " ciao");
-
-}
-
-void DrawManager::on_y_editingFinished()
-{
-    QLineEdit *yCordinate = new QLineEdit;
-    yCordinate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, yCordinate));
-    vectorUser.setY(ui->y->text().toDouble());
-}
-
-void DrawManager::on_z_editingFinished()
-{
-    QLineEdit *zCordinate = new QLineEdit;
-    zCordinate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, zCordinate));
-    vectorUser.setZ(ui->z->text().toDouble());
 }
 
 void DrawManager::on_drawAxis_clicked()
@@ -111,11 +89,22 @@ void DrawManager::on_loadMesh_clicked()
                        "Open Eigen Mesh",
                        ".",
                        "OBJ(*.obj);;PLY(*.ply)");
+    string nameMesh = filename.toStdString().substr(filename.toStdString().find_last_of("/") + 1);
     if (!filename.isEmpty()) {
-        meshEigen = new DrawableEigenMesh();
-        meshEigen->readFromObj(filename.toStdString());
-        mainWindow->pushObj(meshEigen, filename.toStdString().substr(filename.toStdString().find_last_of("/") + 1));
+        meshEigen = new PickableEigenmesh();
+        meshEigen->readFromObj(filename.toStdString());        
+        mainWindow->pushObj(meshEigen, nameMesh);
         setButtonMeshLoaded(true);
+        mainWindow->updateGlCanvas();
+    }
+    if(nameMesh == "batman_bust.obj"){
+        selection = 1;
+        coordPlane.setXCoord(0);
+        coordPlane.setYCoord(52);
+        DrawManager::on_serchPoint_clicked();
+        DrawManager::on_drawPoint_clicked();
+        DrawManager::on_translate_clicked();
+        polyline.setCheckerDimension(nPlaneUser,meshEigen->getNumberFaces());
         mainWindow->updateGlCanvas();
     }
     nextColor = 0;
@@ -204,12 +193,6 @@ void DrawManager::on_writeCoordinate_stateChanged(int arg1)
 {
     if(arg1 == Qt::Checked){
         ui->coordinate->setEnabled(true);
-        ui->labelX->setEnabled(true);
-        ui->labelY->setEnabled(true);
-        ui->labelZ->setEnabled(true);
-        ui->x->setEnabled(true);
-        ui->y->setEnabled(true);
-        ui->z->setEnabled(true);
         ui->drawAxis->setEnabled(true);
         ui->selectAxis->setEnabled(false);
         ui->xAxis->setEnabled(false);
@@ -221,12 +204,6 @@ void DrawManager::on_writeCoordinate_stateChanged(int arg1)
         ui->yAxis->setEnabled(true);
         ui->zAxis->setEnabled(true);
         ui->coordinate->setEnabled(false);
-        ui->labelX->setEnabled(false);
-        ui->labelY->setEnabled(false);
-        ui->labelZ->setEnabled(false);
-        ui->x->setEnabled(false);
-        ui->y->setEnabled(false);
-        ui->z->setEnabled(false);
         ui->drawAxis->setEnabled(false);
     }
 }
@@ -302,10 +279,10 @@ void DrawManager::on_clearMesh_clicked()
     ui->zAxis->setEnabled(false);
     ui->nPlaneLabel->setEnabled(false);
     ui->nPlane->setEnabled(false);
-    ui->writeCoordinate->setEnabled(false);
     ui->showAxis->setEnabled(false);
     ui->clearMesh->setEnabled(false);
     ui->loadMesh->setEnabled(true);
+    ui->saveMesh->setEnabled(false);
     mainWindow->deleteObj(meshEigen);
     mainWindow->clearDebugCylinders();
     mainWindow->clearDebugSpheres();
@@ -433,7 +410,14 @@ void DrawManager::on_check_clicked()
         polyline.check(meshEigen,angleCStart,0);
         mainWindow->updateGlCanvas();
     }
+
+    rotation = getRotationMatrix(axis, 180*halfC);
+    meshEigen->rotate(rotation,Vector3d(0,0,0));
+    meshEigen->updateBoundingBox();
+    mainWindow->updateGlCanvas();
+
     polyline.searchNoVisibleFace();
+
     if(polyline.getNotVisibleFace().size() > 0){
         c.setHsv(0,255,255);
         for(int i : polyline.getNotVisibleFace()){
@@ -444,8 +428,11 @@ void DrawManager::on_check_clicked()
         msgBox.setText("Con questa configurazione alcune facce non sono visibili");
         msgBox.setStandardButtons(QMessageBox::Ok);
         if(msgBox.exec() == QMessageBox::Ok){
-            polyline.updateChecker();
+            updateCheckerFlag = true;
+            ui->stepByStep->setEnabled(true);
         }
+    }else {
+        ui->stepByStep->setEnabled(true);
     }
 
 }
@@ -465,13 +452,14 @@ void DrawManager::on_stepByStep_clicked()
         c.setHsv(100,0,127);
         meshEigen->setFaceColor(c.redF(), c.greenF(), c.blueF(), i);
     }
+    mainWindow->updateGlCanvas();
 
     meshEigen->rotate(rotation,Vector3d(0,0,0));
     meshEigen->updateBoundingBox();
     polyline.resetChecker();
     polyline.setCheckerDimension(nPlaneUser,meshEigen->getNumberFaces());
+
     polyline.check(meshEigen,nextColor,0);
-    mainWindow->updateGlCanvas();
 
     rotation = getRotationMatrix(axis, -(stepAngle * halfC * increse));
     meshEigen->rotate(rotation,Vector3d(0,0,0));
@@ -491,7 +479,7 @@ void DrawManager::on_stepByStep_clicked()
         meshEigen->updateBoundingBox();
 
         polyline.check(meshEigen,nextColor,i+1);
-        mainWindow->updateGlCanvas();
+        //mainWindow->updateGlCanvas();
 
         rotation = getRotationMatrix(axis, -(stepAngle * halfC * increse));
         meshEigen->rotate(rotation,Vector3d(0,0,0));
@@ -503,10 +491,15 @@ void DrawManager::on_stepByStep_clicked()
         increse++;
         nextColor += stepColor;
     }
-        ui->stepByStep->setEnabled(false);
-        polyline.minimizeProblem();
-}
 
+        ui->stepByStep->setEnabled(false);
+        if(updateCheckerFlag){
+            polyline.updateChecker();
+        }
+        polyline.minimizeProblem();
+        polyline.serchUniqueTriangoForOrientation();
+        colorUniqueTriangle();
+}
 
 void DrawManager::on_meshToOrigin_clicked()
 {
@@ -538,8 +531,9 @@ void DrawManager::on_resetParam_clicked()
     stepColor = 0;
     nextColor = 0;
     nPlaneUser = 1;
+    stepAngle = 0;
     polyline.resetChecker();
-    ui->stepByStep->setEnabled(true);
+    filename ="";
 }
 
 void DrawManager::on_xRotCord_editingFinished()
@@ -691,4 +685,50 @@ void DrawManager::translate(Pointd point)
 {
     meshEigen->translate(point);
     mainWindow->updateGlCanvas();
+}
+
+void DrawManager::colorUniqueTriangle(){
+
+    increse = 0;
+    QString format = ".obj";
+    QColor c;
+    for(unsigned int i = 0; i <polyline.getUniqueTriangle().size();i++){
+        cout << polyline.getOrientationSelected()[i] << " orientation " ;
+        /*for(unsigned int j = 0; j <polyline.getUniqueTriangle()[i].size();j++){
+            cout << polyline.getUniqueTriangle()[i][j] << " ";
+        }
+        cout << endl;*/
+    }
+    for(unsigned int i = 0; i < polyline.getUniqueTriangle().size(); i++){
+        //Coloro di nuovo tutta la mesh di grigio
+        c.setHsv(0,0,127);
+        for(unsigned int i = 0 ; i < meshEigen->getNumberFaces(); i++){
+            meshEigen->setFaceColor(c.redF(), c.greenF(), c.blueF(), i);
+        }
+
+        //verifico se per l'orientamento selezionato esistono singoli triangoli visti
+        if(polyline.getUniqueTriangle()[i].size() > 0){
+            c.setHsv(0,255,255);
+            for(unsigned int j = 0 ; j < polyline.getUniqueTriangle()[i].size(); j++){
+                int f = polyline.getUniqueTriangle()[i][j];
+                meshEigen->setFaceColor(c.redF(), c.greenF(), c.blueF(), f);
+            }
+
+            meshEigen->saveOnObj((filename + QString::number(polyline.getOrientationSelected()[i])+"singole"+format).toUtf8().constData());
+        }
+
+    }
+}
+
+void DrawManager::on_pushButton_clicked()
+{
+
+}
+
+void DrawManager::on_triangleClicked(unsigned int i)
+{
+    color.setHsv(0,255,255);
+    meshEigen->setFaceColor(color.redF(), color.greenF(), color.blueF(), i);
+    mainWindow->updateGlCanvas();
+    cout << i << "triangolo cliccato" ;
 }

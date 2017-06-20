@@ -4,6 +4,7 @@
 #include <eigenmesh/eigenmesh/gui/drawableeigenmesh.h>
 #include <eigenmesh/eigenmesh/gui/eigenmeshmanager.h>
 #include <eigenmesh/eigenmesh/eigenmesh.h>
+#include <eigenmesh/eigenmesh/gui/pickable_eigenmesh.h>
 #include <Eigen/Dense>
 
 #include <CGAL/Surface_mesh.h>
@@ -21,7 +22,7 @@
 #include <QStatusBar>
 #include <QDebug>
 #include <QFrame>
-#include "gurobi_c++.h"
+#include <gurobi_c++.h>
 
 using namespace CGAL;
 using namespace std;
@@ -89,25 +90,34 @@ class PolylinesCheck
 
         void searchNoVisibleFace        ();
 
-        VectI getNotVisibleFace        ();
+        VectI getNotVisibleFace         ();
 
-        void minimizeProblem();
+        void minimizeProblem            ();
 
-        void updateChecker();
+        void updateChecker              ();
 
+        void resetMatrixCheck();
+
+        void serchUniqueTriangoForOrientation();
+        MatrixI getUniqueTriangle() const;
+        void setUniqueTriangle(const MatrixI &value);
+
+        VectI getOrientationSelected() const;
 
 private:
 
-        DrawableEigenMesh   meshPoly;
+        PickableEigenmesh   meshPoly;
         Array2dPoint        poly2d;
         ArrayPoint          poly;
         VectI               notVisibleFace;
+        VectI               orientationSelected;
         Point3              min;
         Point3              max;
         Pointd              minP;
         Pointd              maxP;
         Pointd              I;
         MatrixI             checker;
+        MatrixI             uniqueTriangle;
         Vec3                normalplane;
         double              d;
 };

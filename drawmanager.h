@@ -62,13 +62,8 @@ class DrawManager : public QFrame
         explicit DrawManager(QWidget *parent = 0);
         ~DrawManager();
 
-    private slots:
-
-        void on_x_editingFinished               ();
-
-        void on_y_editingFinished               ();
-
-        void on_z_editingFinished               ();
+    void colorUniqueTriangle();
+private slots:
 
         void on_drawAxis_clicked                ();
 
@@ -164,9 +159,13 @@ class DrawManager : public QFrame
 
         void rotate                             (int axis);
 
+        void on_pushButton_clicked              ();
+
+        void on_triangleClicked                 (unsigned int i);
+
 private:
 
-        DrawableEigenMesh*  meshEigen;
+        PickableEigenmesh*  meshEigen;
         PolylinesCheck      polyline;
         Ui::DrawManager*    ui;
         MainWindow*         mainWindow;
@@ -174,6 +173,7 @@ private:
         Pointd              vectorUser;
         Pointd              point;
         Pointd              meshBerycenter;
+        QColor              color;
         Mesh                mesh;
         Vec2                coordPlane;
         int                 nPlaneUser;
@@ -181,6 +181,7 @@ private:
         int                 increse;
         int                 stepColor;
         int                 nextColor;
+        bool                updateCheckerFlag = false;
         double              stepAngle;
         double              cylinder, sphere;
         double              xRot, yRot, zRot;

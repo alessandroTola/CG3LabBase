@@ -337,71 +337,59 @@ VectI PolylinesCheck::getNotVisibleFace()
 void PolylinesCheck::minimizeProblem(){
     int nOrientation = checker.size();
     int nTriangles = checker[0].size();
-    int e, nSolutions, i;
-    int set[nOrientation][nTriangles];
+    cout << nOrientation << endl;
 
-    for(int i = 0; i < nOrientation; i++){
-        for(int j = 0; j < nTriangles; j++){
-            set[i][j]=checker[i][j];
+    //int conto = 0;
+    /*for(int i = 0; i < nTriangles; i++){
+        conto = 0;
+        for(int j = 0; j < nOrientation; j++){
+            conto += checker[j][i];
         }
-    }
+        if (conto == 0){
+            cout << "dio cane dio merda " <<  i << endl;
+        }
+    }*/
+
     try{
         GRBEnv env = GRBEnv();
 
         GRBModel model = GRBModel(env);
 
         GRBVar *orientation = model.addVars(nOrientation, GRB_BINARY);
-        //GRBVar *triangle = model.addVars(nTriangles, GRB_BINARY);
 
         //creo le variabili o e t per gli orientamenti e per i triangoli
-        for (e = 0; e < nOrientation; e++) {
+        for (int i = 0; i < nOrientation; i++) {
           ostringstream vname;
-          vname << "o" << e;
-          orientation[e].set(GRB_StringAttr_VarName, vname.str());
+          vname << "o" << i;
+          orientation[i].set(GRB_StringAttr_VarName, vname.str());
         }
-
-        /*for (e = 0; e < nTriangles; e++) {
-          ostringstream vname;
-          vname << "t" << e;
-          triangle[e].set(GRB_StringAttr_VarName, vname.str());
-        }*/
 
         model.update();
 
-        GRBLinExpr sum;
-
-        for(int j = 0; j < nTriangles; j++){
-            sum = 0;
-            for(int i = 0 ; i < nOrientation ; i++){
-                sum+=orientation[i]*set[i][j];
+        for(int i = 0; i < nTriangles; i++){
+            GRBLinExpr sum = 0;
+            for(int j = 0 ; j < nOrientation ; j++){
+                sum+=orientation[j]*checker[j][i];
             }
-            model.addConstr(sum >=1);
+            //cout << sum << " " << i << endl;
+            model.addConstr(sum >= 1);
         }
 
-        GRBLinExpr expr;
-        expr = 0;
+        GRBLinExpr expr = 0;
+
         for (int j = 0; j < nOrientation; j++) {
             expr += orientation[j];
         }
 
-        model.setObjective(expr, GRB_MAXIMIZE);
+        model.setObjective(expr, GRB_MINIMIZE);
 
         model.optimize();
 
-        nSolutions = model.get(GRB_IntAttr_SolCount);
-        for (i = 0; i < nOrientation; i++) {
-          model.set(GRB_IntParam_ObjNumber, i);
-
-          cout << "\tSet " << i;
-          for (e = 0; e < nSolutions; e++) {
-            cout << " ";
-            model.set(GRB_IntParam_SolutionNumber, e);
-            int val = model.get(GRB_IntAttr_NumObj);
-            cout << std::setw(6) << val;
-          }
-          cout << endl;
+        for (int i = 0; i < nOrientation; i++) {
+            cout << orientation[i].get(GRB_StringAttr_VarName) << " "
+                 << orientation[i].get(GRB_DoubleAttr_X) << endl;
+            if(orientation[i].get(GRB_DoubleAttr_X) == 1) orientationSelected.push_back(i);
         }
-
     }
     catch (GRBException e) {
       cout << "Error code = " << e.getErrorCode() << endl;
@@ -413,16 +401,60 @@ void PolylinesCheck::minimizeProblem(){
 }
 
 void PolylinesCheck::updateChecker(){
-    sort(notVisibleFace.begin(), notVisibleFace.end());
+    cout << " "<<checker.size();
+    checker.push_back(VectI());
+    cout << " "<< checker.size() <<endl;
+    checker[checker.size()-1].resize(checker[0].size());
 
-    for(int i = notVisibleFace.size()-1 ; i >= 0 ; i--){
-        for(int j = 0 ; j < checker.size(); j++){
-            checker[j].erase(checker[j].begin()+notVisibleFace[i]);
-        }
+    int nOrientation = checker.size();
+    for(unsigned int i = 0; i < notVisibleFace.size(); i++){
+        int id = notVisibleFace[i];
+        checker[nOrientation-1][id] = 1;
+        cout << " " << id << " " << checker[nOrientation-1][id] << " orientation " << nOrientation-1 << endl;
     }
-
 }
 
+void PolylinesCheck::resetMatrixCheck(){
+    for(unsigned int i = 0; i<checker[0].size(); i++)
+        checker[0][i] = 0;
+}
 
+void PolylinesCheck::serchUniqueTriangoForOrientation(){
+    int count, id;
 
+    uniqueTriangle.resize(orientationSelected.size());
+
+    /*for(int i = 0; i < orientationSelected.size(); i++){
+        uniqueTriangle[i].resize(checker[0].size());
+    }*/
+
+    for(unsigned int i = 0; i < checker[0].size(); i++){
+        count = 0;
+        id = 0;
+        for(unsigned int j = 0; j < orientationSelected.size(); j++){
+            count+=checker[orientationSelected[j]][i];
+            if(checker[orientationSelected[j]][i] == 1) {
+                id = j;
+            }
+        }
+        if(count == 1) {
+            uniqueTriangle[id].push_back(i);
+        }
+    }
+}
+
+MatrixI PolylinesCheck::getUniqueTriangle() const
+{
+    return uniqueTriangle;
+}
+
+void PolylinesCheck::setUniqueTriangle(const MatrixI &value)
+{
+    uniqueTriangle = value;
+}
+
+VectI PolylinesCheck::getOrientationSelected() const
+{
+    return orientationSelected;
+}
 
