@@ -14,7 +14,9 @@ DrawManager::DrawManager(QWidget *parent) :
 
 {
     ui->setupUi(this);
-    connect(mainWindow, SIGNAL(objectPicked(uint)),this, SLOT(on_triangleClicked(uint)));
+    //connect(mainWindow, SIGNAL(objectPicked(uint)),this, SLOT(on_triangleClicked(uint)));
+    connect(mainWindow, SIGNAL(objectsPicked(QList<unsigned int>)),
+            this, SLOT(on_triangleClicked(QList<unsigned int>)));
 }
 
 DrawManager::~DrawManager(){
@@ -46,6 +48,7 @@ void DrawManager::setButtonMeshLoaded(bool b){
     ui->check->setEnabled(b);
     ui->resetParam->setEnabled(b);
     ui->meshToOrigin->setEnabled(b);
+    ui->visualFrame->setEnabled(b);
 
     ui->selectAxis->setEnabled(b);
         QList<QWidget*> list = ui->selectAxis->findChildren<QWidget*>() ;
@@ -80,11 +83,10 @@ void DrawManager::on_nPlane_editingFinished(){
     nPlaneUser = ui->nPlane->text().toInt();
     stepAngle = 180 / nPlaneUser;
     stepColor = 120 / nPlaneUser;
-    polyline.setCheckerDimension(nPlaneUser,meshEigen->getNumberFaces());
+    polyline.setCheckerDimension(nPlaneUser+1,meshEigen->getNumberFaces());
 }
 
-void DrawManager::on_loadMesh_clicked()
-{
+void DrawManager::on_loadMesh_clicked(){
     QString filename = QFileDialog::getOpenFileName(nullptr,
                        "Open Eigen Mesh",
                        ".",
@@ -104,7 +106,8 @@ void DrawManager::on_loadMesh_clicked()
         DrawManager::on_serchPoint_clicked();
         DrawManager::on_drawPoint_clicked();
         DrawManager::on_translate_clicked();
-        polyline.setCheckerDimension(nPlaneUser,meshEigen->getNumberFaces());
+        nPlaneUser = 10;
+        polyline.setCheckerDimension(nPlaneUser+1,meshEigen->getNumberFaces());
         mainWindow->updateGlCanvas();
     }
     nextColor = 0;
@@ -121,8 +124,7 @@ void DrawManager::on_loadMesh_clicked()
     }
 }
 
-void DrawManager::on_eigenToCgal_clicked()
-{
+void DrawManager::on_eigenToCgal_clicked(){
     convertEigenMesh(meshEigen);
 }
 
@@ -148,14 +150,12 @@ void DrawManager::convertEigenMesh (DrawableEigenMesh *meshEigenOrigin){
     }
 }
 
-void DrawManager::on_clearAxis_clicked()
-{
+void DrawManager::on_clearAxis_clicked(){
     mainWindow->clearDebugCylinders();
     ui->clearAxis->setEnabled(false);
 }
 
-void DrawManager::on_saveMeshCgal_clicked()
-{
+void DrawManager::on_saveMeshCgal_clicked(){
     //Tasto rimosso dal manager
     QFileDialog filedialog(mainWindow, tr("Export surface to file"));
     filedialog.setFileMode(QFileDialog::AnyFile);
@@ -189,8 +189,7 @@ void DrawManager::on_saveMeshCgal_clicked()
     }
 }
 
-void DrawManager::on_writeCoordinate_stateChanged(int arg1)
-{
+void DrawManager::on_writeCoordinate_stateChanged(int arg1){
     if(arg1 == Qt::Checked){
         ui->coordinate->setEnabled(true);
         ui->drawAxis->setEnabled(true);
@@ -208,36 +207,31 @@ void DrawManager::on_writeCoordinate_stateChanged(int arg1)
     }
 }
 
-void DrawManager::on_showAxis_stateChanged(int arg1)
-{
+void DrawManager::on_showAxis_stateChanged(int arg1){
     if (arg1 == Qt::Checked) mainWindow->drawAxis(true);
     else mainWindow->drawAxis(false);
     mainWindow->updateGlCanvas();
 }
 
-void DrawManager::on_xAxis_toggled(bool checked)
-{
+void DrawManager::on_xAxis_toggled(bool checked){
     if(checked){
         selection=0;
     }
 }
 
-void DrawManager::on_yAxis_toggled(bool checked)
-{
+void DrawManager::on_yAxis_toggled(bool checked){
     if(checked){
         selection=1;
     }
 }
 
-void DrawManager::on_zAxis_toggled(bool checked)
-{
+void DrawManager::on_zAxis_toggled(bool checked){
     if(checked){
         selection=2;
     }
 }
 
-void DrawManager::on_rotationAxis_clicked()
-{
+void DrawManager::on_rotationAxis_clicked(){
     //Funzione momentaneamente rimossa, cambio piano di attacco alla mesh
     /*polyline.minMaxPoints(mesh, selection);
 
@@ -271,8 +265,7 @@ void DrawManager::on_rotationAxis_clicked()
     }*/
 }
 
-void DrawManager::on_clearMesh_clicked()
-{
+void DrawManager::on_clearMesh_clicked(){
     ui->selectAxis->setEnabled(false);
     ui->xAxis->setEnabled(false);
     ui->yAxis->setEnabled(false);
@@ -283,6 +276,9 @@ void DrawManager::on_clearMesh_clicked()
     ui->clearMesh->setEnabled(false);
     ui->loadMesh->setEnabled(true);
     ui->saveMesh->setEnabled(false);
+    ui->visualFrame->setEnabled(false);
+    ui->checkFrame->setEnabled(false);
+    ui->selectAxis_2->setEnabled(false);
     mainWindow->deleteObj(meshEigen);
     mainWindow->clearDebugCylinders();
     mainWindow->clearDebugSpheres();
@@ -292,22 +288,19 @@ void DrawManager::on_clearMesh_clicked()
 
 }
 
-void DrawManager::on_xCoord_editingFinished()
-{
+void DrawManager::on_xCoord_editingFinished(){
     QLineEdit *xCordinate = new QLineEdit;
     xCordinate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, xCordinate));
     coordPlane.setXCoord(ui->xCoord->text().toDouble());
 }
 
-void DrawManager::on_yCoord_editingFinished()
-{
+void DrawManager::on_yCoord_editingFinished(){
     QLineEdit *yCordinate = new QLineEdit;
     yCordinate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, yCordinate));
     coordPlane.setYCoord(ui->yCoord->text().toDouble());
 }
 
-void DrawManager::on_serchPoint_clicked()
-{
+void DrawManager::on_serchPoint_clicked(){
     switch (selection) {
     case 0:
         vectorUser.setX(-100);
@@ -343,22 +336,19 @@ void DrawManager::on_serchPoint_clicked()
     mainWindow->addDebugCylinder(vectorUser, point,cylinder, QColor("#ff0000"));
 }
 
-void DrawManager::on_sphere_editingFinished()
-{
+void DrawManager::on_sphere_editingFinished(){
     QLineEdit *spherea = new QLineEdit;
     spherea->setValidator(new QDoubleValidator(-999.0, 999.0, 2, spherea));
     sphere = ui->sphere->text().toDouble();
 }
 
-void DrawManager::on_cylinder_editingFinished()
-{
+void DrawManager::on_cylinder_editingFinished(){
     QLineEdit *cylindera = new QLineEdit;
     cylindera->setValidator(new QDoubleValidator(-999.0, 999.0, 2, cylindera));
     cylinder = ui->cylinder->text().toDouble();
 }
 
-void DrawManager::on_drawPoint_clicked()
-{
+void DrawManager::on_drawPoint_clicked(){
     polyline.checkIntersect(meshEigen, vectorUser, point, selection);
     mainWindow->enableDebugObjects();
     mainWindow->clearDebugSpheres();
@@ -368,8 +358,7 @@ void DrawManager::on_drawPoint_clicked()
 
 }
 
-void DrawManager::on_translate_clicked()
-{
+void DrawManager::on_translate_clicked(){
     Pointd centro(-((polyline.getMax()-polyline.getMin())/2+polyline.getMin()));
     meshEigen->translate(centro);
     Matrix3d rotation;
@@ -395,12 +384,12 @@ void DrawManager::on_translate_clicked()
     mainWindow->updateGeometry();
 }
 
-void DrawManager::on_check_clicked()
-{
+void DrawManager::on_check_clicked(){
     int angleCStart = 120;
     Matrix3d rotation;
     Vec3 axis(1,0,0);
     QColor c;
+    polyline.updateChecker(false);
     polyline.check(meshEigen,angleCStart,0);
 
     for(int i = 0; i < nPlaneUser; i++){
@@ -437,8 +426,7 @@ void DrawManager::on_check_clicked()
 
 }
 
-void DrawManager::on_stepByStep_clicked()
-{
+void DrawManager::on_stepByStep_clicked(){
     if(filename == ""){
         on_saveMesh_clicked();
     }
@@ -452,12 +440,15 @@ void DrawManager::on_stepByStep_clicked()
         c.setHsv(100,0,127);
         meshEigen->setFaceColor(c.redF(), c.greenF(), c.blueF(), i);
     }
+
     mainWindow->updateGlCanvas();
 
     meshEigen->rotate(rotation,Vector3d(0,0,0));
     meshEigen->updateBoundingBox();
+
     polyline.resetChecker();
     polyline.setCheckerDimension(nPlaneUser,meshEigen->getNumberFaces());
+    polyline.updateChecker(false);
 
     polyline.check(meshEigen,nextColor,0);
 
@@ -493,23 +484,19 @@ void DrawManager::on_stepByStep_clicked()
     }
 
         ui->stepByStep->setEnabled(false);
-        if(updateCheckerFlag){
-            polyline.updateChecker();
-        }
+
         polyline.minimizeProblem();
         polyline.serchUniqueTriangoForOrientation();
         colorUniqueTriangle();
 }
 
-void DrawManager::on_meshToOrigin_clicked()
-{
+void DrawManager::on_meshToOrigin_clicked(){
     meshBerycenter = meshEigen->getBarycenter();
     meshEigen->translate(-meshBerycenter);
     mainWindow->updateGlCanvas();
 }
 
-void DrawManager::on_saveMesh_clicked()
-{
+void DrawManager::on_saveMesh_clicked(){
     QFileDialog filedialog(mainWindow, tr("Export surface to file"));
     filedialog.setFileMode(QFileDialog::AnyFile);
 
@@ -520,13 +507,12 @@ void DrawManager::on_saveMesh_clicked()
     filedialog.setDefaultSuffix("obj");
     if(filedialog.exec()){
         filename = filedialog.selectedFiles().front();
-        std::cerr << "Saving to file \"" << filename.toLocal8Bit().data() << "\"...";
+        //std::cerr << "Saving to file \"" << filename.toLocal8Bit().data() << "\"...";
         meshEigen->saveOnObj(filename.toUtf8().constData());
     }
 }
 
-void DrawManager::on_resetParam_clicked()
-{
+void DrawManager::on_resetParam_clicked(){
     increse = 0;
     stepColor = 0;
     nextColor = 0;
@@ -536,59 +522,49 @@ void DrawManager::on_resetParam_clicked()
     filename ="";
 }
 
-void DrawManager::on_xRotCord_editingFinished()
-{
+void DrawManager::on_xRotCord_editingFinished(){
     QLineEdit *xRotate = new QLineEdit;
     xRotate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, xRotate));
     xRot = ui->xRotCord->text().toDouble();
 }
 
-void DrawManager::on_yRotCord_editingFinished()
-{
+void DrawManager::on_yRotCord_editingFinished(){
     QLineEdit *yRotate = new QLineEdit;
     yRotate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, yRotate));
     yRot = ui->yRotCord->text().toDouble();
 }
 
-void DrawManager::on_zRotCord_editingFinished()
-{
+void DrawManager::on_zRotCord_editingFinished(){
     QLineEdit *zRotate = new QLineEdit;
     zRotate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, zRotate));
     zRot = ui->zRotCord->text().toDouble();
 }
 
-void DrawManager::on_xMenoR_clicked()
-{
+void DrawManager::on_xMenoR_clicked(){
     rotate(0);
 }
 
-void DrawManager::on_xPiuR_clicked()
-{
+void DrawManager::on_xPiuR_clicked(){
     rotate(1);
 }
 
-void DrawManager::on_yMenoR_clicked()
-{
+void DrawManager::on_yMenoR_clicked(){
     rotate(2);
 }
 
-void DrawManager::on_yPiuR_clicked()
-{
+void DrawManager::on_yPiuR_clicked(){
     rotate(3);
 }
 
-void DrawManager::on_zMenoR_clicked()
-{
+void DrawManager::on_zMenoR_clicked(){
     rotate(4);
 }
 
-void DrawManager::on_zPiuR_clicked()
-{
+void DrawManager::on_zPiuR_clicked(){
     rotate(5);
 }
 
-void DrawManager::rotate(int axisP)
-{
+void DrawManager::rotate(int axisP){
     Matrix3d rotation;
     Vec3 axis;
     switch (axisP) {
@@ -624,15 +600,13 @@ void DrawManager::rotate(int axisP)
     mainWindow->updateGlCanvas();
 }
 
-void DrawManager::on_xTransCord_editingFinished()
-{
+void DrawManager::on_xTransCord_editingFinished(){
     QLineEdit *xTranslate = new QLineEdit;
     xTranslate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, xTranslate));
     xTrans = ui->xTransCord->text().toDouble();
 }
 
-void DrawManager::on_yTransCord_editingFinished()
-{
+void DrawManager::on_yTransCord_editingFinished(){
     QLineEdit *yTranslate = new QLineEdit;
     yTranslate->setValidator(new QDoubleValidator(-999.0, 999.0, 2, yTranslate));
     yTrans = ui->yTransCord->text().toDouble();
@@ -645,44 +619,37 @@ void DrawManager::on_zTransCord_editingFinished()
     zTrans = ui->zTransCord->text().toDouble();
 }
 
-void DrawManager::on_xMeno_clicked()
-{
+void DrawManager::on_xMeno_clicked(){
     Pointd translateP(xTrans, 0, 0);
     translate(-translateP);
 }
 
-void DrawManager::on_xPiu_clicked()
-{
+void DrawManager::on_xPiu_clicked(){
     Pointd translateP(xTrans, 0, 0);
     translate(translateP);
 }
 
-void DrawManager::on_yMeno_clicked()
-{
+void DrawManager::on_yMeno_clicked(){
     Pointd translateP(0, yTrans, 0);
     translate(-translateP);
 }
 
-void DrawManager::on_yPiu_clicked()
-{
+void DrawManager::on_yPiu_clicked(){
     Pointd translateP(0, yTrans, 0);
     translate(translateP);
 }
 
-void DrawManager::on_zMeno_clicked()
-{
+void DrawManager::on_zMeno_clicked(){
     Pointd translateP(0, 0, zTrans);
     translate(-translateP);
 }
 
-void DrawManager::on_zPiu_clicked()
-{
+void DrawManager::on_zPiu_clicked(){
     Pointd translateP(0, 0, zTrans);
     translate(translateP);
 }
 
-void DrawManager::translate(Pointd point)
-{
+void DrawManager::translate(Pointd point){
     meshEigen->translate(point);
     mainWindow->updateGlCanvas();
 }
@@ -693,11 +660,8 @@ void DrawManager::colorUniqueTriangle(){
     QString format = ".obj";
     QColor c;
     for(unsigned int i = 0; i <polyline.getUniqueTriangle().size();i++){
-        cout << polyline.getOrientationSelected()[i] << " orientation " ;
-        /*for(unsigned int j = 0; j <polyline.getUniqueTriangle()[i].size();j++){
-            cout << polyline.getUniqueTriangle()[i][j] << " ";
+        for(unsigned int j = 0; j <polyline.getUniqueTriangle()[i].size();j++){
         }
-        cout << endl;*/
     }
     for(unsigned int i = 0; i < polyline.getUniqueTriangle().size(); i++){
         //Coloro di nuovo tutta la mesh di grigio
@@ -720,15 +684,26 @@ void DrawManager::colorUniqueTriangle(){
     }
 }
 
-void DrawManager::on_pushButton_clicked()
-{
-
+void DrawManager::on_pushButton_clicked(){
+    mainWindow->updateGlCanvas();
 }
 
-void DrawManager::on_triangleClicked(unsigned int i)
-{
+void DrawManager::on_triangleClicked(QList<unsigned int> i){
     color.setHsv(0,255,255);
-    meshEigen->setFaceColor(color.redF(), color.greenF(), color.blueF(), i);
-    mainWindow->updateGlCanvas();
-    cout << i << "triangolo cliccato" ;
+    meshEigen->setFaceColor(color.redF(), color.greenF(), color.blueF(), i.back());
+    polyline.addFaceExlude(i.back());
+}
+
+void DrawManager::on_pointsMeshRadioButton_toggled(bool checked){
+    if (checked){
+        meshEigen->setPointsShading();
+        mainWindow->updateGlCanvas();
+    }
+}
+
+void DrawManager::on_flatMeshRadioButton_toggled(bool checked) {
+    if (checked){
+        meshEigen->setFlatShading();
+        mainWindow->updateGlCanvas();
+    }
 }

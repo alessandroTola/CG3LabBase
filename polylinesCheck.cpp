@@ -100,7 +100,6 @@ void PolylinesCheck::convertTo2dPlane (){
                   a.x() * r[0][1] + a.y() * r[1][1] +a.z() * r[2][1],
                   a.x() * r[0][2] + a.y() * r[1][2] +a.z() * r[2][2]);
         Point2 p(p1.x(), p1.y());
-        //polygon2D.push_back(p);
         poly2d.push_back(p);
     }
 }
@@ -239,6 +238,7 @@ void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin, int color, int in
     int face;
     double max = meshEigenOrigin->getBoundingBox().maxY()+50;
     double min = meshEigenOrigin->getBoundingBox().minY()-50;
+    //int indexNotVisibleVector = checker.size()-1;
 
     for(unsigned int i = 0; i < checker[indexPlane].size(); i++){
         /*if(notVisibleFace.size() > 0){
@@ -248,7 +248,9 @@ void PolylinesCheck::check(DrawableEigenMesh *meshEigenOrigin, int color, int in
                 meshEigenOrigin->setFaceColor(c.redF(), c.greenF(),c.blueF(),j);
             }
         }*/
-        if(checker[indexPlane][i] != 1){
+        if(checker[indexPlane][i] != 1 && !(std::find(notVisibleFace.begin(),
+                                                      notVisibleFace.end(), i)
+                                            != notVisibleFace.end())){
             f = meshEigenOrigin->getFace(i);
             e1 = meshEigenOrigin->getVertex(f.x());
             e2 = meshEigenOrigin->getVertex(f.y());
@@ -303,21 +305,18 @@ int PolylinesCheck::serchMinY (std::vector<int> lista, DrawableEigenMesh *meshEi
     return min;
 }
 
-void PolylinesCheck::setCheckerDimension (int nplane, int dimension)
-{
+void PolylinesCheck::setCheckerDimension (int nplane, int dimension){
     checker.resize(nplane+=1);
     for(int i = 0; i< nplane ; i++){
         checker[i].resize(dimension);
     }
 }
 
-void PolylinesCheck::resetChecker()
-{
+void PolylinesCheck::resetChecker(){
     checker.clear();
 }
 
-MatrixI PolylinesCheck::getChecker()
-{
+MatrixI PolylinesCheck::getChecker(){
     return checker;
 }
 
@@ -329,15 +328,13 @@ void PolylinesCheck::searchNoVisibleFace (){
     }
 }
 
-VectI PolylinesCheck::getNotVisibleFace()
-{
+VectI PolylinesCheck::getNotVisibleFace(){
     return notVisibleFace;
 }
 
 void PolylinesCheck::minimizeProblem(){
     int nOrientation = checker.size();
     int nTriangles = checker[0].size();
-    cout << nOrientation << endl;
 
     //int conto = 0;
     /*for(int i = 0; i < nTriangles; i++){
@@ -371,7 +368,6 @@ void PolylinesCheck::minimizeProblem(){
             for(int j = 0 ; j < nOrientation ; j++){
                 sum+=orientation[j]*checker[j][i];
             }
-            //cout << sum << " " << i << endl;
             model.addConstr(sum >= 1);
         }
 
@@ -400,17 +396,17 @@ void PolylinesCheck::minimizeProblem(){
     }
 }
 
-void PolylinesCheck::updateChecker(){
-    cout << " "<<checker.size();
-    checker.push_back(VectI());
-    cout << " "<< checker.size() <<endl;
-    checker[checker.size()-1].resize(checker[0].size());
+void PolylinesCheck::updateChecker(bool updateCheckerFlag){
+
+    if(!updateCheckerFlag){
+        checker.push_back(VectI());
+        checker[checker.size()-1].resize(checker[0].size());
+    }
 
     int nOrientation = checker.size();
     for(unsigned int i = 0; i < notVisibleFace.size(); i++){
         int id = notVisibleFace[i];
         checker[nOrientation-1][id] = 1;
-        cout << " " << id << " " << checker[nOrientation-1][id] << " orientation " << nOrientation-1 << endl;
     }
 }
 
@@ -423,10 +419,6 @@ void PolylinesCheck::serchUniqueTriangoForOrientation(){
     int count, id;
 
     uniqueTriangle.resize(orientationSelected.size());
-
-    /*for(int i = 0; i < orientationSelected.size(); i++){
-        uniqueTriangle[i].resize(checker[0].size());
-    }*/
 
     for(unsigned int i = 0; i < checker[0].size(); i++){
         count = 0;
@@ -443,18 +435,19 @@ void PolylinesCheck::serchUniqueTriangoForOrientation(){
     }
 }
 
-MatrixI PolylinesCheck::getUniqueTriangle() const
-{
+MatrixI PolylinesCheck::getUniqueTriangle() const{
     return uniqueTriangle;
 }
 
-void PolylinesCheck::setUniqueTriangle(const MatrixI &value)
-{
+void PolylinesCheck::setUniqueTriangle(const MatrixI &value){
     uniqueTriangle = value;
 }
 
-VectI PolylinesCheck::getOrientationSelected() const
-{
+VectI PolylinesCheck::getOrientationSelected() const{
     return orientationSelected;
+}
+
+void PolylinesCheck::addFaceExlude(unsigned int i){
+    notVisibleFace.push_back(i);
 }
 

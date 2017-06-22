@@ -24,6 +24,8 @@
 #include <QFrame>
 #include <gurobi_c++.h>
 
+#include <algorithm>
+
 using namespace CGAL;
 using namespace std;
 
@@ -94,7 +96,7 @@ class PolylinesCheck
 
         void minimizeProblem            ();
 
-        void updateChecker              ();
+        void updateChecker              (bool b);
 
         void resetMatrixCheck();
 
@@ -103,6 +105,8 @@ class PolylinesCheck
         void setUniqueTriangle(const MatrixI &value);
 
         VectI getOrientationSelected() const;
+
+        void addFaceExlude(unsigned int i);
 
 private:
 

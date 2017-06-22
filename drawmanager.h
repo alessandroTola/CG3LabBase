@@ -4,6 +4,7 @@
 #include <viewer/interfaces/drawable_object.h>
 #include <viewer/interfaces/drawable_mesh.h>
 #include <viewer/mainwindow.h>
+#include <viewer/glcanvas.h>
 
 #include <eigenmesh/eigenmesh/gui/drawableeigenmesh.h>
 #include <eigenmesh/eigenmesh/gui/eigenmeshmanager.h>
@@ -63,6 +64,7 @@ class DrawManager : public QFrame
         ~DrawManager();
 
     void colorUniqueTriangle();
+
 private slots:
 
         void on_drawAxis_clicked                ();
@@ -161,8 +163,11 @@ private slots:
 
         void on_pushButton_clicked              ();
 
-        void on_triangleClicked                 (unsigned int i);
+        void on_triangleClicked                 (QList<unsigned int> i);
 
+        void on_pointsMeshRadioButton_toggled(bool checked);
+
+        void on_flatMeshRadioButton_toggled(bool checked);
 private:
 
         PickableEigenmesh*  meshEigen;
@@ -176,7 +181,7 @@ private:
         QColor              color;
         Mesh                mesh;
         Vec2                coordPlane;
-        int                 nPlaneUser;
+        int                 nPlaneUser=1;
         int                 selection;
         int                 increse;
         int                 stepColor;
